@@ -1,0 +1,12 @@
+{
+  "servers": {
+    "atlassian-rovo": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.atlassian.com/v1/mcp"
+      ]
+    }
+  }
+}

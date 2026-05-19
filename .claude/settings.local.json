@@ -1,11 +1,14 @@
 {
-  "enabledMcpjsonServers": [
-    "atlassian-rovo"
-  ],
   "permissions": {
     "allow": [
       "Bash(gh --version)",
-      "Bash(gh auth *)"
+      "Bash(gh auth *)",
+      "Bash(gh project *)",
+      "Bash(gh label *)",
+      "Bash(gh api *)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "atlassian-rovo"
+  ]
 }
