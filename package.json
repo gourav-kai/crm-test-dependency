@@ -2,20 +2,6 @@
   "name": "mvp-crm",
   "private": true,
   "version": "0.1.0",
-  "workspaces": ["backend", "frontend"],
-  "scripts": {
-    "dev": "concurrently -k -n be,fe -c blue,magenta \"npm --workspace backend run dev\" \"npm --workspace frontend run dev\"",
-    "test": "npm --workspaces run test",
-    "lint": "npm --workspaces run lint",
-    "format:check": "prettier --check ."
-  },
-  "devDependencies": {
-    "concurrently": "^9.0.0",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.30.0",
-  "version": "0.1.0",
-  "private": true,
   "description": "Lean CRM MVP with lead management, authentication, and weekly digest.",
   "type": "module",
   "workspaces": [
@@ -23,22 +9,15 @@
     "frontend"
   ],
   "scripts": {
-    "install-all": "npm install",
-    "dev": "npm run dev --workspace backend & npm run dev --workspace frontend",
-    "build": "npm run build --workspace backend && npm run build --workspace frontend",
-    "test": "npm test --workspace backend && npm test --workspace frontend",
-    "lint": "npm run lint --workspace backend && npm run lint --workspace frontend"
+    "dev": "concurrently -k -n be,fe -c blue,magenta \"npm --workspace backend run dev\" \"npm --workspace frontend run dev\"",
+    "build": "npm --workspaces run build",
+    "test": "npm --workspaces run test",
+    "lint": "npm --workspaces run lint",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
-    "@eslint/js": "^8.57.0",
-    "@testing-library/jest-dom": "^6.5.0",
-    "@testing-library/react": "^16.0.0",
-    "@types/node": "^20.14.0",
-    "@typescript-eslint/eslint-plugin": "^7.13.0",
-    "@typescript-eslint/parser": "^7.13.0",
+    "concurrently": "^9.0.0",
     "eslint": "^8.57.0",
-    "eslint-plugin-react": "^7.35.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^3.3.0",
     "typescript": "^5.5.0"
   }
