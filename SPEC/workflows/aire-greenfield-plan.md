@@ -260,7 +260,69 @@ Steps:
    - `files_touched`: from AIRE_ARCHITECT's File/Module Boundary Map in the patterns doc.
    - `assignee`: null in greenfield (no Jira source). May be assigned by user if they request it; otherwise omit.
 
-3. **Identify `shared_files`** — files that serialize across stories (e.g. `package.json`, central route registry, migrations index). Default empty.
+3. **Identify `shared_files` (BLOCKING — do NOT skip).** This step is the #1 source of broken graphs. Follow the procedure exactly:
+
+   **3.1 Auto-detect overlap candidates.** Walk every story's `files_touched` and build a frequency map: any file path appearing in **2 or more** stories is a candidate. List candidates explicitly to the user — do not silently filter.
+
+   **3.2 Add the always-shared baseline.** Regardless of overlap, the following must be in `shared_files` if they exist in this project:
+   - Every `package.json` (root + per-workspace)
+   - Every `tsconfig*.json`, `vite.config.*`, `vitest.config.*`, `next.config.*`, lockfiles (`package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`)
+   - Lint/format configs (`.eslintrc*`, `.prettierrc*`, `biome.json`)
+   - Central route registries (e.g. `backend/src/routes.ts`, `frontend/src/router.tsx`, framework-specific equivalents)
+   - Root app bootstrap (`backend/src/app.ts`, `backend/src/server.ts`, `frontend/src/App.tsx`, `frontend/src/main.tsx`)
+   - Migrations index directory (e.g. `backend/migrations/`)
+   - Shared type/interface barrel files (`*/types/index.ts`, `*/types/express.d.ts`, etc.)
+   - Root config (`.env.example`, `.gitignore`, `README.md`, `tsconfig.base.json`)
+   - CI / DevOps shared files (`.github/workflows/*`, `Dockerfile`, `docker-compose.yml`)
+
+   **3.3 Present the consolidated `shared_files` list to the user for explicit confirmation:**
+   ```
+   📦 Proposed `shared_files` ([N] entries):
+     - package.json
+     - backend/src/routes.ts
+     - frontend/src/router.tsx
+     - …
+   Any to add or remove? (proceed / list additions or removals)
+   ```
+   Block until the user responds.
+
+   **3.4 BLOCKING SELF-CHECK before writing the graph.** Compute, for each pair of stories in the same wave, whether their `files_touched` overlap on a file NOT in `shared_files`. If any overlap exists:
+   - If the file is genuinely shared across the system (route registry, app bootstrap, etc.) → ADD it to `shared_files`.
+   - If only those two stories touch it → SPLIT the stories or merge them; do NOT add a one-off file to `shared_files` as a workaround.
+   - Re-run the check. Only proceed to step 4 when zero illegal overlaps remain.
+
+   **3.5 Empty `shared_files` is forbidden for any plan with 2+ stories.** If the workflow ends step 3 with `shared_files: []`, that is a planning failure — STOP and re-run step 3.1.
+
+3a. **Auto-assign per developer (when `team_size >= 2`) — optimize for PER-DEV parallelism, not by layer.** Ask the user:
+
+   ```
+   You said team_size=N. Want me to draft per-dev story assignments now?
+     1) Yes — propose an assignment that maximizes each dev's self-parallel moments
+        (so each dev can run `aire-dev-implement` mode 2 on their own queue often)
+     2) No — leave assignee null; assignment happens at run time
+   ```
+
+   **Do NOT default to a layer split (one dev = backend, other = frontend).** That bias was wrong — it minimizes per-dev parallelism because within-feature work chains architecturally. Instead, optimize the assignment so each dev's queue maximizes **self-parallel moments** (points in time where ≥2 of that dev's stories are simultaneously ready).
+
+   **Assignment heuristic — apply in this order:**
+
+   1. **Carry over Jira/explicit assignees as fixed.** Anything the user pre-assigned stays.
+   2. **Identify "parallel triples"** — sets of 2+ stories that become ready at the same time and have disjoint `files_touched`. Assign all stories in a triple to the **same dev** so they can fan those out via mode 2 on one machine.
+   3. **Balance queue length within ~20%** across devs. Avoid one dev with 13 stories and another with 7 unless the long chain is unavoidable.
+   4. **Respect role hints only if the user provides them.** Otherwise let stories flow to whichever dev needs to balance.
+   5. **Cross-feature stories prefer different devs only when** doing so doesn't break a parallel triple. Cross-feature splitting helps integration speed but hurts per-dev parallelism — favor the latter.
+
+   Produce a draft and present it for confirmation with the parallelism analysis (step 5 below):
+
+   ```
+   📋 Proposed assignment (team_size=N):
+     - dev1@org.com (5 stories, 2 self-parallel moments): 1.1, 2.1, 3.1, 4.1, 5.1
+     - dev2@org.com (5 stories, 2 self-parallel moments): 1.2, 2.2, 3.2, 4.2, 5.2
+
+   Confirm? (yes / revise — tell me which stories to reassign)
+   ```
+
+   On confirmation, write the `assignments:` block AND populate each story's `assignee` field accordingly. The two must stay consistent — `aire graph-check` enforces it.
 
 4. **Validate disjoint-files across each wave**: any two stories in the same wave must have disjoint `files_touched` modulo `shared_files`. If overlap, return to Architect to split.
 
@@ -268,12 +330,20 @@ Steps:
 
 6. **Write `docs/plans/dependency-graph.yml`** following the schema in `SPEC/templates/IMPLEMENTATION_PLAN_FORMAT.md`.
 
+6a. **Run `aire graph-check` (BLOCKING).** Immediately after writing the YAML, invoke `aire graph-check`. If it reports any errors, STOP — fix the graph and re-run. Do not advance to step 7 until `graph-check` passes with zero errors. Warnings should be reviewed but do not block.
+
 7. **Add `## Dependency Graph` section at the top of `docs/plans/implementation-plan.md`** with:
    - A Mermaid `graph TD` mirror of the YAML.
    - A wave summary table.
    - A note: "If the Mermaid drifts from the YAML, the YAML wins. Run `aire graph-check`."
 
-8. **Show the graph to the user and confirm:**
+8. **Show the graph + per-dev parallelism analysis and confirm:**
+
+   Compute and display:
+
+   - **Global graph stats**: total stories, wave count, largest wave, root-independent count, longest chain depth.
+   - **Per-developer parallelism analysis** (when `assignments:` exists): for each dev, list their queue length, their sequential chains, their self-parallel moments (where ≥2 of their stories are ready at the same time), and an estimated wall-clock cost in story-units.
+
    ```
    📊 Dependency Graph
       - Total stories: K
@@ -281,9 +351,33 @@ Steps:
       - Independent at root: R
       - Longest dependency chain: L stories deep
 
-      Proceed to story file authoring? (yes / revise graph)
+   👥 Per-dev parallelism analysis (team_size=N):
+
+      dev1@org.com (5 stories):
+        - Sequential chains: 1.1→2.1 (2), 3.1→4.1→5.1 (3)
+        - Self-parallel moments: 2 (max 3 ready at once after 1.3)
+        - Estimated wall-clock: ~3 story-units
+
+      dev2@org.com (5 stories):
+        - Sequential chains: 1.2→2.2 (2)
+        - Self-parallel moments: 2 (max 3 ready at once after dev1's wave 4)
+        - Estimated wall-clock: ~3 story-units
+
+      Balance: ✅ even (5/5)
+      Critical path: dev1's chain 3.1→4.1→5.1 = 3 story-units
+
+      Proceed to story file authoring? (yes / revise graph / reassign stories)
    ```
-   Block until the user confirms `yes`.
+
+   If the analysis shows poor balance (one dev's wall-clock > 2× the other) or zero self-parallel moments for either dev, flag it explicitly:
+
+   ```
+   ⚠️ dev2@org.com has 0 self-parallel moments — every one of their stories
+      sits in a sequential chain. They'll never benefit from mode 2.
+      Consider reassigning some stories from dev1 to flatten dev2's queue.
+   ```
+
+   Block until the user confirms `yes`. On `reassign`, loop back to step 3a.
 
 ### Phase 2: Detail Each Story
 For each story include (see IMPLEMENTATION_PLAN_FORMAT.md for complete requirements):

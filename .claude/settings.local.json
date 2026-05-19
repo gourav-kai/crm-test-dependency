@@ -5,7 +5,11 @@
       "Bash(gh auth *)",
       "Bash(gh project *)",
       "Bash(gh label *)",
-      "Bash(gh api *)"
+      "Bash(gh api *)",
+      "Bash(aire --version)",
+      "Bash(aire graph-check *)",
+      "Bash(aire)",
+      "Bash(where aire *)"
     ]
   },
   "enabledMcpjsonServers": [

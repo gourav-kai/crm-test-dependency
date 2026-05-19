@@ -116,7 +116,28 @@ waves:
     stories: [1.1, 1.2]
   - wave: 2
     stories: [1.3]
+
+assignments:
+  alice@org.com:
+    role_hint: backend         # Optional free-text — used in CLI output only
+    queue: [1.1, 1.3]
+  bob@org.com:
+    role_hint: frontend
+    queue: [1.2]
+# `assignments:` is REQUIRED when team_size >= 2.
+# Each developer's `queue:` is the dependency-aware ordering of stories
+# assigned to them (assignee field on each story must match a key here).
+# `aire next-parallel --assignee <name>` reads this block to print a
+# per-dev queue. `aire-dev-implement` mode 1 uses it for "filter by my
+# assignee" prompts.
 ```
+
+### Assignments Rule
+
+- When `team_size >= 2`, the graph MUST include an `assignments:` block mapping each developer to their dependency-aware story queue. Each story's `assignee` MUST match a key in `assignments:`.
+- For `team_size = 1`, `assignments:` is optional (one implicit queue).
+- The queue order respects `requires`: if story B requires A and both are assigned to the same dev, A appears first in their queue.
+- When `assignee` is split across stories that one dev wouldn't naturally own (e.g. a backend dev assigned a frontend-only story), the plan workflow flags it during Phase 1.5 for user confirmation.
 
 ### Wave Derivation Rule
 

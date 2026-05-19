@@ -33,9 +33,41 @@ legal_notice: |
 
 --- 
 
-## Execution Mode (ask FIRST, before anything else)
+## Step 0: Identify the Developer
 
-When the user invokes `aire-dev-implement` and `docs/plans/dependency-graph.yml` exists, ask:
+**Solo dev (`team_size = 1` or no `assignments:` block):** skip this step. `<my-assignee>` is `null`; the entire ready set is your dispatch set. Mode 2 fans out across **every** wave-ready story on your single machine — this is exactly how the graph promotes parallelism for solo developers. Proceed to the Execution Mode prompt.
+
+**Multi-dev (`team_size >= 2`, `assignments:` block present):** ASK who is at the keyboard before anything else:
+
+```
+👤 Which developer is running this session?
+   The graph has multiple assignees:
+   1) dev1@org.com (backend, 13 stories)
+   2) dev2@org.com (frontend, 7 stories)
+   3) Not me — show all assignees' stories (default)
+
+Pick a number or paste your email:
+```
+
+Resolve to a single `<my-assignee>` string OR `null` (option 3 / no assignments block / single-dev project).
+
+**This identification scopes everything downstream:**
+
+- The ready list will be filtered to `assignments[<my-assignee>].queue ∩ ready` whenever `<my-assignee>` is set.
+- The Mode prompt below will only offer Mode 2 (parallel) when **2+ of your own stories** are ready.
+- Both modes will only let you pick stories from your own queue (Mode 1) or dispatch subagents for your own stories (Mode 2). Other devs' stories are never touched by your session.
+
+If `<my-assignee>` is `null` (option 3 or no assignments), behave exactly as before — the entire ready set is visible.
+
+Equivalent CLI: `aire next-parallel --assignee=<my-assignee>` shows you what you'd see at this step.
+
+---
+
+## Execution Mode (ask SECOND, after dev identification)
+
+After Step 0, compute **`my-ready-set`** = (stories whose `requires` are all Done) ∩ (your queue, if `<my-assignee>` is set).
+
+Ask:
 
 ```
 🚦 Execution mode?
@@ -44,36 +76,51 @@ When the user invokes `aire-dev-implement` and `docs/plans/dependency-graph.yml`
      spawning one subagent per story. Subagents run concurrently; each writes
      to its own status shard, then the parent rolls up.
 
+You have N stories ready: [list of IDs from my-ready-set]
+
 Type 1 or 2:
 ```
 
-Exactly two options. If `docs/plans/dependency-graph.yml` is missing OR the plan has only one story, default to mode 1 silently.
+Rules:
 
-### Mode 1 — One-by-one (existing behavior, unchanged)
+- Exactly two options. Never a third.
+- If `docs/plans/dependency-graph.yml` is missing, or the plan has only one story, or `my-ready-set` has size 1, default to **mode 1 silently** (parallel needs 2+ ready stories to be meaningful).
+- If `my-ready-set` is **empty**, do NOT show this prompt. Tell the user:
+  ```
+  ℹ️  No stories ready for <my-assignee> right now. You're waiting on:
+     - <story X> (assigned to <other-dev>, depends on Y)
+     - …
+  Run `aire next-parallel --by-dev` to see the global picture.
+  ```
+  Then exit.
 
-Proceed to **Tell Me Which Story** below. Everything works exactly as it does today.
+### Mode 1 — One-by-one (scoped to your queue when assignee is set)
 
-### Mode 2 — In one go (parallel)
+Proceed to **Tell Me Which Story** below. When `<my-assignee>` is set, the "next story" / "pick" prompts will list ONLY stories from `my-ready-set` first, then other stories from `assignments[<my-assignee>].queue` that aren't yet ready (marked "waits on X"). Stories assigned to other devs are hidden.
 
-This is the new behavior. The parent agent orchestrates; subagents implement.
+### Mode 2 — In one go (parallel, dispatched from YOUR queue only)
+
+The parent agent orchestrates on YOUR machine; subagents implement YOUR stories. Stories assigned to other developers are never spawned in your session — they are working on those independently on their own machines.
 
 **Pre-flight (parent does this before spawning anything):**
 
 1. Read `docs/plans/dependency-graph.yml` and `docs/status.md`.
-2. Identify the **next ready wave** = stories whose `requires` are all marked `Done` in `## Story Tracker` AND who are not themselves already `Done`.
-3. **Disjoint-files check**: verify no two stories in the ready set touch overlapping files outside `shared_files`. On overlap, ABORT and tell the user the graph is corrupt — run `aire graph-check`.
-4. **Show the user the wave and confirm:**
+2. Compute the **dispatch set**:
+   - Start from `global-ready` = stories whose `requires` are all marked `Done` in `## Story Tracker` AND who are not themselves already `Done`.
+   - If `<my-assignee>` was set in Step 0: intersect with `assignments[<my-assignee>].queue` → this is `my-ready-set`. Spawn subagents only for these.
+   - If `<my-assignee>` is null: dispatch set = `global-ready`.
+3. **Disjoint-files check**: verify no two stories in the dispatch set touch overlapping files outside `shared_files`. On overlap, ABORT and tell the user the graph is corrupt — run `aire graph-check`. (The graph-check gate in the plan workflow should have prevented this.)
+4. **Show the user the dispatch set and confirm:**
    ```
-   📊 Wave ready: [list of story IDs]
-      - 1.1 (alice@org.com) → src/server/index.ts, src/server/health.ts
-      - 1.2 (bob@org.com)   → src/web/main.tsx, src/web/App.tsx
-   Spawn N subagents now? (y/n)
+   📊 Ready to implement in parallel (you=dev1@org.com): 3 stories
+      - 2.1 Auth backend           → backend/src/features/auth/**
+      - 3.1 Leads repository       → backend/src/features/leads/**
+      - 4.1 Digest repository + mailer → backend/src/features/digest/**
+   Shared files that will be serialized by this session:
+      - backend/src/routes.ts
+      - backend/migrations/
+   Spawn 3 subagents now? (y/n)
    ```
-5. (Jira-sourced multi-dev case) Optionally offer the assignee filter:
-   ```
-   Filter by your assignee? (you=<email>) yes/no
-   ```
-   When `yes`, the parent narrows the spawn set to stories assigned to the current user.
 
 **Dispatch (parent spawns one subagent per ready story):**
 
@@ -102,6 +149,17 @@ As each subagent reports `done`, the parent immediately:
 - Run the existing per-story Jira / GitHub status update flow.
 - Ask the user once: *"Update Jira/GitHub for each story individually, or push the batch in one go?"*
 - Apply the user's choice.
+
+### Multi-dev concurrent sessions (dev1 + dev2 each running mode 2)
+
+Both devs can run `aire-dev-implement` Mode 2 simultaneously on their own machines:
+
+1. **Each dev picks themselves in Step 0.** dev1 picks `dev1@org.com`; dev2 picks `dev2@org.com`. After Step 0, neither session can dispatch the other's stories — `my-ready-set` is computed as the intersection with their own queue.
+2. **No subagent in dev1's session ever spawns for a dev2 story** (and vice versa). The dispatch-set computation in pre-flight step 2 enforces this; no runtime coordination needed.
+3. **Cross-dev contention only exists on `shared_files`** when both sessions touch the same one (e.g. `backend/src/routes.ts` + `frontend/src/router.tsx` are independent — but `package.json` at root is shared). Subagents in either session refuse to write `shared_files`; the parent in each session serializes those edits locally. Across branches, the second dev to merge handles the rebase.
+4. **`docs/status.md` writes converge through `docs/status/events.log`.** Each parent appends to the log on its machine; when branches merge, the log appends naturally (append-only file). The `## Story Tracker` table is rebuilt from the log on merge if a conflict arises.
+
+The framework provides the safety contract; the human protocol is just: each dev on their own branch, rebase before each new Mode 2 dispatch, merge to main when the wave is green.
 
 ---
 

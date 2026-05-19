@@ -1,0 +1,384 @@
+version: 1
+generated_by: AIRE_PRODUCT_OWNER
+generated_at: 2026-05-19
+
+team_size: 2
+
+shared_files: [package.json, package-lock.json, backend/package.json, frontend/package.json, tsconfig.base.json, backend/tsconfig.json, frontend/tsconfig.json, backend/vitest.config.ts, frontend/vitest.config.ts, frontend/vite.config.ts, .eslintrc.cjs, .prettierrc, .gitignore, .env.example, README.md, backend/src/app.ts, backend/src/server.ts, backend/src/routes.ts, backend/src/types/express.d.ts, backend/src/config/env.ts, backend/migrations/, backend/src/test/factories.ts, frontend/src/main.tsx, frontend/src/App.tsx, frontend/src/router.tsx, frontend/src/api/client.ts, frontend/src/ui/AppShell.tsx, frontend/src/types/index.ts, frontend/src/test/handlers.ts]
+
+stories:
+  # ===== EPIC 1: FOUNDATION =====
+  - id: 1.1
+    title: Backend skeleton
+    epic: 1
+    jira: LOCAL
+    assignee: abhigyan.ranjan@3pillarglobal.com
+    requires: []
+    enables: [1.4, 2.1]
+    files_touched:
+      - backend/package.json
+      - backend/tsconfig.json
+      - backend/vitest.config.ts
+      - backend/src/server.ts
+      - backend/src/app.ts
+      - backend/src/config/env.ts
+      - backend/src/logger.ts
+      - backend/src/http/middleware/errorHandler.ts
+      - backend/src/http/middleware/requestId.ts
+      - backend/src/http/errors.ts
+      - backend/src/routes.ts
+      - backend/src/features/_health/health.routes.ts
+      - backend/src/features/_health/health.routes.test.ts
+      - .env.example
+      - tsconfig.base.json
+      - .eslintrc.cjs
+      - .prettierrc
+      - .gitignore
+      - package.json
+
+  - id: 1.2
+    title: Frontend skeleton
+    epic: 1
+    jira: LOCAL
+    assignee: gourav.g@3pillarglobal.com
+    requires: []
+    enables: [1.4, 2.3]
+    files_touched:
+      - frontend/package.json
+      - frontend/tsconfig.json
+      - frontend/vite.config.ts
+      - frontend/vitest.config.ts
+      - frontend/index.html
+      - frontend/tailwind.config.ts
+      - frontend/postcss.config.cjs
+      - frontend/src/main.tsx
+      - frontend/src/App.tsx
+      - frontend/src/router.tsx
+      - frontend/src/api/client.ts
+      - frontend/src/ui/AppShell.tsx
+      - frontend/src/ui/Button.tsx
+      - frontend/src/ui/Card.tsx
+      - frontend/src/index.css
+      - package.json
+
+  - id: 1.3
+    title: DB foundation (client, migrations runner, initial schema, seed)
+    epic: 1
+    jira: LOCAL
+    assignee: abhigyan.ranjan@3pillarglobal.com
+    requires: []
+    enables: [1.4, 2.2, 4.1, 6.1]
+    files_touched:
+      - backend/package.json
+      - backend/src/db/client.ts
+      - backend/src/db/migrate.ts
+      - backend/migrations/
+      - backend/scripts/seed.ts
+      - backend/src/server.ts
+
+  - id: 1.4
+    title: Connect FE to BE (health check on home page)
+    epic: 1
+    jira: LOCAL
+    assignee: abhigyan.ranjan@3pillarglobal.com
+    requires: [1.1, 1.2, 1.3]
+    enables: [2.3]
+    files_touched:
+      - backend/src/features/_health/health.service.ts
+      - backend/src/features/_health/health.routes.ts
+      - frontend/src/features/_home/HomePage.tsx
+      - frontend/src/features/_home/api.ts
+      - frontend/src/router.tsx
+
+  # ===== EPIC 2: AUTHENTICATION =====
+  - id: 2.1
+    title: Auth middleware + JWT verify + requireRole + rate limiter
+    epic: 2
+    jira: LOCAL
+    assignee: abhigyan.ranjan@3pillarglobal.com
+    requires: [1.1]
+    enables: [2.2, 4.2]
+    files_touched:
+      - backend/package.json
+      - backend/src/http/middleware/auth.ts
+      - backend/src/http/middleware/requireRole.ts
+      - backend/src/http/middleware/rateLimit.ts
+      - backend/src/http/middleware/auth.test.ts
+      - backend/src/http/middleware/requireRole.test.ts
+      - backend/src/types/express.d.ts
+      - backend/src/app.ts
+
+  - id: 2.2
+    title: Auth service + /auth/login + /auth/me
+    epic: 2
+    jira: LOCAL
+    assignee: abhigyan.ranjan@3pillarglobal.com
+    requires: [1.3, 2.1]
+    enables: [2.4, 3.1]
+    files_touched:
+      - backend/src/features/auth/auth.routes.ts
+      - backend/src/features/auth/auth.service.ts
+      - backend/src/features/auth/auth.schemas.ts
+      - backend/src/features/auth/auth.service.test.ts
+      - backend/src/features/users/users.repository.ts
+      - backend/src/routes.ts
+      - backend/src/app.ts
+
+  - id: 2.3
+    title: Frontend AuthProvider + LoginPage + RequireAuth/RequireRole
+    epic: 2
+    jira: LOCAL
+    assignee: gourav.g@3pillarglobal.com
+    requires: [1.2, 1.4]
+    enables: [2.4, 3.3, 4.4, 5.2]
+    files_touched:
+      - frontend/src/features/auth/AuthProvider.tsx
+      - frontend/src/features/auth/useAuth.ts
+      - frontend/src/features/auth/LoginPage.tsx
+      - frontend/src/features/auth/RequireAuth.tsx
+      - frontend/src/features/auth/RequireRole.tsx
+      - frontend/src/features/auth/api.ts
+      - frontend/src/api/client.ts
+      - frontend/src/App.tsx
+      - frontend/src/router.tsx
+      - frontend/src/types/index.ts
+
+  - id: 2.4
+    title: Auth integration tests (Supertest + MSW)
+    epic: 2
+    jira: LOCAL
+    assignee: gourav.g@3pillarglobal.com
+    requires: [2.2, 2.3]
+    enables: []
+    files_touched:
+      - backend/src/features/auth/auth.routes.int.test.ts
+      - backend/src/test/factories.ts
+      - frontend/src/features/auth/LoginPage.test.tsx
+      - frontend/src/test/handlers.ts
+
+  # ===== EPIC 3: USER MANAGEMENT =====
+  - id: 3.1
+    title: Users repository + service (list, create, patch)
+    epic: 3
+    jira: LOCAL
+    assignee: abhigyan.ranjan@3pillarglobal.com
+    requires: [2.2]
+    enables: [3.2, 6.2]
+    files_touched:
+      - backend/src/features/users/users.repository.ts
+      - backend/src/features/users/users.service.ts
+      - backend/src/features/users/users.schemas.ts
+      - backend/src/features/users/users.service.test.ts
+
+  - id: 3.2
+    title: Users routes (GET/POST/PATCH /users, admin-only)
+    epic: 3
+    jira: LOCAL
+    assignee: abhigyan.ranjan@3pillarglobal.com
+    requires: [3.1]
+    enables: [3.3]
+    files_touched:
+      - backend/src/features/users/users.routes.ts
+      - backend/src/features/users/users.routes.int.test.ts
+      - backend/src/routes.ts
+      - backend/src/app.ts
+
+  - id: 3.3
+    title: Frontend UsersAdminPage (list, create, deactivate)
+    epic: 3
+    jira: LOCAL
+    assignee: gourav.g@3pillarglobal.com
+    requires: [2.3, 3.2]
+    enables: []
+    files_touched:
+      - frontend/src/features/users/UsersAdminPage.tsx
+      - frontend/src/features/users/UsersTable.tsx
+      - frontend/src/features/users/CreateUserModal.tsx
+      - frontend/src/features/users/api.ts
+      - frontend/src/features/users/UsersAdminPage.test.tsx
+      - frontend/src/router.tsx
+      - frontend/src/ui/AppShell.tsx
+
+  # ===== EPIC 4: LEAD MANAGEMENT =====
+  - id: 4.1
+    title: Leads repository (prepared statements, role-scoped queries)
+    epic: 4
+    jira: LOCAL
+    assignee: abhigyan.ranjan@3pillarglobal.com
+    requires: [1.3]
+    enables: [4.2, 5.1, 6.2]
+    files_touched:
+      - backend/src/features/leads/leads.repository.ts
+      - backend/src/features/leads/leads.types.ts
+      - backend/src/features/leads/leads.repository.test.ts
+
+  - id: 4.2
+    title: Leads service (role scope enforcement, stage transitions)
+    epic: 4
+    jira: LOCAL
+    assignee: gourav.g@3pillarglobal.com
+    requires: [2.1, 4.1]
+    enables: [4.3]
+    files_touched:
+      - backend/src/features/leads/leads.service.ts
+      - backend/src/features/leads/leads.service.test.ts
+
+  - id: 4.3
+    title: Leads routes (CRUD + stage transition)
+    epic: 4
+    jira: LOCAL
+    assignee: abhigyan.ranjan@3pillarglobal.com
+    requires: [4.2]
+    enables: [4.4]
+    files_touched:
+      - backend/src/features/leads/leads.routes.ts
+      - backend/src/features/leads/leads.schemas.ts
+      - backend/src/features/leads/leads.routes.int.test.ts
+      - backend/src/routes.ts
+      - backend/src/app.ts
+
+  - id: 4.4
+    title: Frontend LeadsListPage (filter, search, role-aware columns)
+    epic: 4
+    jira: LOCAL
+    assignee: gourav.g@3pillarglobal.com
+    requires: [2.3, 4.3]
+    enables: [4.5]
+    files_touched:
+      - frontend/src/features/leads/LeadsListPage.tsx
+      - frontend/src/features/leads/LeadsTable.tsx
+      - frontend/src/features/leads/LeadFilters.tsx
+      - frontend/src/features/leads/api.ts
+      - frontend/src/features/leads/LeadsListPage.test.tsx
+      - frontend/src/router.tsx
+      - frontend/src/ui/AppShell.tsx
+      - frontend/src/types/index.ts
+
+  - id: 4.5
+    title: Frontend LeadFormPage (create + edit, RHF + Zod)
+    epic: 4
+    jira: LOCAL
+    assignee: gourav.g@3pillarglobal.com
+    requires: [4.4]
+    enables: [4.6]
+    files_touched:
+      - frontend/src/features/leads/LeadFormPage.tsx
+      - frontend/src/features/leads/LeadForm.tsx
+      - frontend/src/features/leads/schemas.ts
+      - frontend/src/features/leads/api.ts
+      - frontend/src/features/leads/LeadFormPage.test.tsx
+      - frontend/src/router.tsx
+
+  - id: 4.6
+    title: Frontend stage transition UI (LeadDetailPage + StageStepper)
+    epic: 4
+    jira: LOCAL
+    assignee: gourav.g@3pillarglobal.com
+    requires: [4.5]
+    enables: []
+    files_touched:
+      - frontend/src/features/leads/LeadDetailPage.tsx
+      - frontend/src/features/leads/StageStepper.tsx
+      - frontend/src/features/leads/api.ts
+      - frontend/src/features/leads/LeadDetailPage.test.tsx
+      - frontend/src/router.tsx
+
+  # ===== EPIC 5: ANALYTICS =====
+  - id: 5.1
+    title: Analytics service + routes (leads-per-person, leads-by-stage)
+    epic: 5
+    jira: LOCAL
+    assignee: gourav.g@3pillarglobal.com
+    requires: [4.1]
+    enables: [5.2]
+    files_touched:
+      - backend/src/features/analytics/analytics.service.ts
+      - backend/src/features/analytics/analytics.routes.ts
+      - backend/src/features/analytics/analytics.schemas.ts
+      - backend/src/features/analytics/analytics.service.test.ts
+      - backend/src/features/analytics/analytics.routes.int.test.ts
+      - backend/src/routes.ts
+      - backend/src/app.ts
+
+  - id: 5.2
+    title: Frontend DashboardPage (2 Recharts bar charts)
+    epic: 5
+    jira: LOCAL
+    assignee: gourav.g@3pillarglobal.com
+    requires: [2.3, 5.1]
+    enables: []
+    files_touched:
+      - frontend/src/features/dashboard/DashboardPage.tsx
+      - frontend/src/features/dashboard/LeadsPerPersonChart.tsx
+      - frontend/src/features/dashboard/LeadsByStageChart.tsx
+      - frontend/src/features/dashboard/api.ts
+      - frontend/src/features/dashboard/DashboardPage.test.tsx
+      - frontend/src/router.tsx
+      - frontend/src/ui/AppShell.tsx
+
+  # ===== EPIC 6: WEEKLY EMAIL DIGEST =====
+  - id: 6.1
+    title: Mailer + digest repository
+    epic: 6
+    jira: LOCAL
+    assignee: abhigyan.ranjan@3pillarglobal.com
+    requires: [1.3]
+    enables: [6.2]
+    files_touched:
+      - backend/package.json
+      - backend/src/features/digest/mailer.ts
+      - backend/src/features/digest/digest.repository.ts
+      - backend/src/features/digest/digest.types.ts
+      - backend/src/features/digest/digest.repository.test.ts
+
+  - id: 6.2
+    title: Digest service (runWeeklyDigest, per-recipient try/catch)
+    epic: 6
+    jira: LOCAL
+    assignee: abhigyan.ranjan@3pillarglobal.com
+    requires: [3.1, 4.1, 6.1]
+    enables: [6.3]
+    files_touched:
+      - backend/src/features/digest/digest.service.ts
+      - backend/src/features/digest/digest.service.test.ts
+
+  - id: 6.3
+    title: Scheduler + admin endpoints + digest CLI
+    epic: 6
+    jira: LOCAL
+    assignee: abhigyan.ranjan@3pillarglobal.com
+    requires: [6.2]
+    enables: []
+    files_touched:
+      - backend/package.json
+      - backend/src/features/digest/digest.routes.ts
+      - backend/src/features/digest/digest.scheduler.ts
+      - backend/src/features/digest/digest.routes.int.test.ts
+      - backend/scripts/digest-run.ts
+      - backend/src/routes.ts
+      - backend/src/app.ts
+      - backend/src/server.ts
+
+waves:
+  - wave: 1
+    stories: [1.1, 1.2, 1.3]
+  - wave: 2
+    stories: [1.4, 2.1, 4.1, 6.1]
+  - wave: 3
+    stories: [2.2, 4.2, 5.1]
+  - wave: 4
+    stories: [2.3, 3.1, 4.3]
+  - wave: 5
+    stories: [2.4, 3.2, 4.4, 5.2, 6.2]
+  - wave: 6
+    stories: [3.3, 4.5, 6.3]
+  - wave: 7
+    stories: [4.6]
+
+assignments:
+  abhigyan.ranjan@3pillarglobal.com:
+    role_hint: backend + integration
+    queue: [1.1, 1.3, 1.4, 2.1, 2.2, 4.1, 3.1, 4.3, 3.2, 6.1, 6.2, 6.3]
+  gourav.g@3pillarglobal.com:
+    role_hint: frontend + leads-service + analytics
+    queue: [1.2, 2.3, 4.2, 5.1, 2.4, 4.4, 5.2, 3.3, 4.5, 4.6]
