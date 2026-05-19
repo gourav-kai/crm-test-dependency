@@ -1,0 +1,46 @@
+name: Bug Report
+description: Report a defect
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: input
+    id: parent-story
+    attributes:
+      label: Parent Story
+      description: Which story does this bug relate to?
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options: ["critical", "high", "medium", "low"]
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser / Platform
+      description: e.g. Chrome 120, iOS 17
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Screenshots, logs, error traces
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: dev / staging / prod
+    validations:
+      required: true
