@@ -1,0 +1,11 @@
+{
+  "enabledMcpjsonServers": [
+    "atlassian-rovo"
+  ],
+  "permissions": {
+    "allow": [
+      "Bash(gh --version)",
+      "Bash(gh auth *)"
+    ]
+  }
+}
