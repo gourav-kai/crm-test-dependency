@@ -6,3 +6,17 @@
 
 # SPEC Method - AI Development Framework
 
+# Node
+node_modules
+dist
+coverage
+
+# Env
+.env
+
+# Local DB
+backend/data/*.db
+backend/data/*.db-*
+
+# OS
+.DS_Store

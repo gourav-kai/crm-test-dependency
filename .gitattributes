@@ -1,0 +1,40 @@
+# Append-only files: use union merge so concurrent appends from parallel devs
+# never produce a textual conflict. The cost: if two devs literally edit the
+# SAME existing line, both versions are kept and a human must reconcile.
+# That's acceptable here because our status / event files are append-only
+# tables — each new row is its own line and rows are keyed by Recorded timestamp.
+docs/status.md              merge=union
+docs/status/events.log      merge=union
+docs/bugs.md                merge=union
+
+# Normalize line endings — Windows checkouts shouldn't flip every Markdown file
+# to CRLF and trigger spurious diffs on Linux/macOS dev machines.
+*.md     text eol=lf
+*.yml    text eol=lf
+*.yaml   text eol=lf
+*.json   text eol=lf
+*.ts     text eol=lf
+*.tsx    text eol=lf
+*.js     text eol=lf
+*.cjs    text eol=lf
+*.mjs    text eol=lf
+*.sql    text eol=lf
+*.sh     text eol=lf eol=lf
+*.cmd    text eol=crlf
+*.bat    text eol=crlf
+
+# Binary — never try to merge or diff
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.ico    binary
+*.pdf    binary
+*.db     binary
+*.db-shm binary
+*.db-wal binary
+
+# Lockfiles: keep as text but mark to suppress diff noise in PRs
+package-lock.json   linguist-generated=true
+pnpm-lock.yaml      linguist-generated=true
+yarn.lock           linguist-generated=true

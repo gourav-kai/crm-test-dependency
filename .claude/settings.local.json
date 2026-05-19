@@ -9,7 +9,9 @@
       "Bash(aire --version)",
       "Bash(aire graph-check *)",
       "Bash(aire)",
-      "Bash(where aire *)"
+      "Bash(where aire *)",
+      "PowerShell(npm install *)",
+      "PowerShell(npm *)"
     ]
   },
   "enabledMcpjsonServers": [

@@ -1,7 +1,7 @@
 # Project Status
 
-**Last Updated**: 2026-05-19 16:30
-**Updated By**: PRODUCT_OWNER
+**Last Updated**: 2026-05-19 17:10
+**Updated By**: DEV (parent rollup, Mode 2 parallel wave)
 **Overall Status**: 🟡 IN PROGRESS
 
 ---
@@ -34,7 +34,7 @@
 
 ## Progress Summary
 
-**Overall Completion**: 0% (0/22 stories complete)
+**Overall Completion**: 9% (2/22 stories complete)
 
 | Step | Status | Owner | Updated | Evidence |
 |------|--------|-------|---------|----------|
@@ -51,7 +51,7 @@
 
 ## Current Step (Log)
 
-> **Rollup**: Implementation Plan done (6 epics, 22 stories, 7 waves). 2-dev assignment + dependency graph ready. Next: `aire-dev-implement 1.1` (or run wave 1 in parallel: 1.1, 1.2, 1.3).
+> **Rollup**: Wave 1 partial complete — stories 1.1 (Backend skeleton) + 1.3 (DB foundation) implemented in parallel by assignee abhigyan.ranjan@3pillarglobal.com. 21/21 tests passing, coverage 95.67%, lint clean. Story 1.2 (Frontend skeleton) still pending — assigned to gourav.g@3pillarglobal.com. Next ready (assuming 1.2 lands): wave 2 = {1.4 (waits on 1.2), 2.1, 2.2, 4.1, 6.1}.
 
 **Append-only log.** Each line: `[YYYY-MM-DD HH:MM] [AGENT] [STORY|step] — status`.
 
@@ -62,6 +62,10 @@
 [2026-05-19 14:00] ARCHITECT architecture — docs/architecture/design/00-system-architecture-greenfield.md + diagrams created (v1.0)
 [2026-05-19 15:30] ARCHITECT patterns — docs/architecture/design/01-patterns-and-standards-greenfield.md created (v1.0, includes File/Module Boundary Map)
 [2026-05-19 16:30] PRODUCT_OWNER plan — implementation-plan.md + dependency-graph.yml + 22 story files written; aire graph-check passed; 6 epics, 7 waves; team_size=2 (abhigyan.ranjan@3pillarglobal.com=12 stories, gourav.g@3pillarglobal.com=10 stories)
+[2026-05-19 17:00] DEV dispatch — Mode 2 wave (1.1 + 1.3) started by abhigyan.ranjan@3pillarglobal.com; two subagents spawned with disjoint files_touched ∪ shared_files contract
+[2026-05-19 17:08] DEV 1.1 — Done; backend skeleton (Express + Pino + Zod env + AppError hierarchy + GET /api/health); 13 tests; lint clean
+[2026-05-19 17:08] DEV 1.3 — Done; DB foundation (better-sqlite3 client + idempotent migration runner + 0001_init schema + seed script); 8 tests; lint clean
+[2026-05-19 17:09] DEV parent rollup — wave 1 complete; serialized edits applied (eslint v8 pin + plugins, vitest setup file, backend deps bcrypt/better-sqlite3, server.ts runMigrations wire-in); 21/21 tests, coverage 95.67%
 ```
 
 ---
@@ -78,9 +82,9 @@
 
 | BUILDID | Story | Title | Start | End |
 |---------|-------|-------|-------|-----|
-| — | 1.1 | Backend skeleton | — | — |
+| — | 1.1 | Backend skeleton | 2026-05-19 | 2026-05-19 |
 | — | 1.2 | Frontend skeleton | — | — |
-| — | 1.3 | DB foundation (client, migrations, initial schema, seed) | — | — |
+| — | 1.3 | DB foundation (client, migrations, initial schema, seed) | 2026-05-19 | 2026-05-19 |
 | — | 1.4 | Connect FE to BE (health check on home page) | — | — |
 | — | 2.1 | Auth middleware + JWT verify + requireRole + rate limiter | — | — |
 | — | 2.2 | Auth service + /auth/login + /auth/me | — | — |
@@ -105,11 +109,12 @@
 
 ## Quality Metrics (Log)
 
-> **Rollup**: No metrics yet.
+> **Rollup** (wave 1, stories 1.1 + 1.3 combined backend coverage run): Statements 95.67% ✅ | Branches 90% ✅ | Functions 92.85% ✅ | Lines 95.67% ✅ | Tests 21/21 ✅ | Lint 0 errors ✅.
 
 **Append-only log.** Each line: `[YYYY-MM-DD HH:MM] [STORY] metric=value …`.
 
 ```
+[2026-05-19 17:08] 1.1+1.3 tests=21/21 coverage_stmts=95.67% coverage_branch=90% coverage_funcs=92.85% coverage_lines=95.67% lint=0
 ```
 
 ---
@@ -136,14 +141,21 @@ See `docs/status/events.log` (created on first parallel run).
 - [x] **Implementation Plan**: Done — 2026-05-19
   - Evidence: `docs/plans/implementation-plan.md`, `docs/plans/dependency-graph.yml`, 22 files under `docs/plans/stories/`
   - Notes: 6 epics (Foundation, Auth, Users, Leads, Analytics, Digest), 22 stories, 7 waves. team_size=2; per-dev assignment optimized for self-parallel moments (dev1=12 stories, dev2=10 stories). `aire graph-check` passed; 29 shared_files; no build cycles, no UI/UX phase
+- [x] **Story 1.1 — Backend skeleton**: Done — 2026-05-19
+  - Evidence: `docs/stories-implemented/story-1.1-review.md`; backend tests 21/21 passing, coverage 95.67% stmt / 92.85% func / 90% branch / 95.67% lines, lint clean (0 errors)
+  - Notes: Express + Pino + Zod env + AppError hierarchy + GET /api/health; middleware chain requestId → pino-http → cors → json → routes → errorHandler
+- [x] **Story 1.3 — DB foundation**: Done — 2026-05-19
+  - Evidence: `docs/stories-implemented/story-1.3-review.md`; included in same backend test run (21/21 passing, coverage thresholds met)
+  - Notes: better-sqlite3 client with WAL/FK pragmas, idempotent migration runner (lex-order, per-migration tx, `_migrations` tracking), `0001_init.sql` schema (users, leads, digest_runs), env-driven idempotent seed script
 
 ---
 
 ## Upcoming
 
-1. **Implement Wave 1 (in parallel)** — run `aire-dev-implement` mode 2 for stories 1.1, 1.2, 1.3
-2. **Or sequential start** — run `aire-dev-implement 1.1`
-3. **Optional GitHub Projects export** — if not done, ask AIRE to push milestones (epics) + issues (stories) into Project #9
+1. **Run aire-review-code** on stories 1.1 + 1.3 (recommended next step per workflow)
+2. **Run aire-qa-test-plan** to validate stories 1.1 + 1.3 against requirements
+3. **Story 1.2 (Frontend skeleton)** — assigned to gourav.g@3pillarglobal.com; not yet started
+4. **Wave 2 (after 1.2 lands)**: 1.4 (waits on 1.1+1.2+1.3), 2.1, 2.2, 4.1, 6.1 — many become ready as 1.x stories complete
 
 ---
 
@@ -164,6 +176,6 @@ See `docs/status/events.log` (created on first parallel run).
 | ARCHITECT | Architecture complete | Idle | 2026-05-19 |
 | PRODUCT_OWNER | Implementation plan complete | Idle | 2026-05-19 |
 | BUILD_CYCLE_PLANNER | — | Standby | — |
-| DEV | — | Standby | — |
+| DEV | Implemented stories 1.1 + 1.3 in Mode 2 parallel | Idle | 2026-05-19 |
 | REVIEWER | — | Standby | — |
 | QA | — | Standby | — |
