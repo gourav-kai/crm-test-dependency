@@ -7,3 +7,5 @@
 [2026-05-19 17:08] DEV 1.3 - done tests=21/21 coverage=95.67% lint=clean (parent applied serialized edits: bcrypt+better-sqlite3 deps, runMigrations wired into server.ts, SEED_ADMIN_* added to .env.example)
 [2026-05-19 17:09] PARENT rollup - wave 1 complete (1.1 + 1.3); post-flight git scope check passed
 [2026-05-19 17:12] PARENT github - issues #1 and #3 closed; board status -> Done; batch completion comment posted
+[2026-05-19 18:00] DEV 1.4 — start
+[2026-05-19 17:50] DEV 1.4 — done tests=62/62 coverage=99.66%(FE)/95.89%(BE) lint=deferred reason=pre-existing root .eslintrc.cjs malformed (not modified by 1.4)

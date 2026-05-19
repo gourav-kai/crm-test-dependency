@@ -36,8 +36,7 @@
 
 ## Progress Summary
 
-**Overall Completion**: 9% (2/22 stories complete)
-**Overall Completion**: 5% (1/22 stories complete)
+**Overall Completion**: 18% (4/22 stories complete)
 
 | Step | Status | Owner | Updated | Evidence |
 |------|--------|-------|---------|----------|
@@ -47,7 +46,7 @@
 | UI/UX Design | ⏸️ Skipped | AIRE_UI_UX_DESIGNER | 2026-05-19 | (proceeded without; FE stories use Tailwind defaults) |
 | Build Cycles | ⏸️ Skipped | AIRE_BUILD_CYCLE_PLANNER | 2026-05-19 | (no cycles — single MVP) |
 | Implementation Plan | ✅ Done | AIRE_PRODUCT_OWNER | 2026-05-19 | `docs/plans/implementation-plan.md` + `docs/plans/dependency-graph.yml` + 22 story files |
-| Epic 1: Project Foundation | 🟡 In Progress | DEV | 2026-05-19 | 1/4 stories done |
+| Epic 1: Project Foundation | ✅ Done | DEV | 2026-05-19 | 4/4 stories done |
 | Epic 2: Authentication | ⏸️ Not Started | — | — | — |
 | Epic 3: User Management | ⏸️ Not Started | — | — | — |
 | Epic 4: Lead Management | ⏸️ Not Started | — | — | — |
@@ -99,7 +98,7 @@
 | — | 1.1 | Backend skeleton | — | — |
 | — | 1.2 | Frontend skeleton | 2026-05-19 16:01 | 2026-05-19 16:04 |
 | — | 1.3 | DB foundation (client, migrations, initial schema, seed) | — | — |
-| — | 1.4 | Connect FE to BE (health check on home page) | — | — |
+| — | 1.4 | Connect FE to BE (health check on home page) | 2026-05-19 | 2026-05-19 |
 | — | 2.1 | Auth middleware + JWT verify + requireRole + rate limiter | — | — |
 | — | 2.2 | Auth service + /auth/login + /auth/me | — | — |
 | — | 2.3 | Frontend AuthProvider + LoginPage + RequireAuth/RequireRole | — | — |
@@ -131,6 +130,7 @@
 ```
 [2026-05-19 17:08] 1.1+1.3 tests=21/21 coverage_stmts=95.67% coverage_branch=90% coverage_funcs=92.85% coverage_lines=95.67% lint=0
 [2026-05-19 16:04] [1.2] coverage=99.57% lint=clean tests=32/32
+[2026-05-19 17:50] [1.4] tests=62/62(BE=25,FE=37) coverage=95.89%(BE)/99.66%(FE) health-files=100% lint=deferred(pre-existing-root-eslintrc-malformed)
 ```
 
 ---
@@ -166,6 +166,10 @@ See `docs/status/events.log` (created on first parallel run).
 - [x] **Story 1.2**: Frontend skeleton — 2026-05-19
   - Evidence: `docs/stories-implemented/story-1.2-frontend-skeleton-review.md`
   - Tests: 32/32 passing, coverage 99.57%, lint clean
+- [x] **Story 1.4 — Connect FE to BE (Health Check on Home Page)**: Done — 2026-05-19
+  - Evidence: `docs/stories-implemented/story-1.4-review.md` (pending); backend 25/25 tests + frontend 37/37 tests = 62/62; coverage BE 95.89% lines, FE 99.66% lines, health files 100% across both
+  - Files: `backend/src/features/_health/health.service.ts` (new) + `health.service.test.ts` (new); `backend/src/features/_health/health.routes.ts` (modified — checkHealth + 200/503); `health.routes.test.ts` (modified — new body shape + db-down case); `frontend/src/features/_home/{HomePage.tsx, HomePage.test.tsx, api.ts}` (new); `frontend/src/router.tsx` (modified — mounted HomePage at `/`); `frontend/package.json` (added `msw: ^2.4.0`)
+  - Notes: walking-skeleton loop closed — `/api/health` now pings DB via `SELECT 1` and returns structured `{ok, backend, db}` (200 ok / 503 db-down). HomePage shows two StatusPills + Retry. Lint deferred (pre-existing root `.eslintrc.cjs` malformed from earlier commit `097b035`; not in 1.4's files_touched).
 
 ---
 
@@ -175,9 +179,10 @@ See `docs/status/events.log` (created on first parallel run).
 2. **Run aire-qa-test-plan** to validate stories 1.1 + 1.3 against requirements
 3. **Story 1.2 (Frontend skeleton)** — assigned to gourav.g@3pillarglobal.com; not yet started
 4. **Wave 2 (after 1.2 lands)**: 1.4 (waits on 1.1+1.2+1.3), 2.1, 2.2, 4.1, 6.1 — many become ready as 1.x stories complete
-1. **Await Story 1.4** — required before starting 2.3 (Frontend Auth)
-2. **Optional** — run `aire-review-code` for Story 1.2
-3. **Optional GitHub Projects export** — if not done, ask AIRE to push milestones (epics) + issues (stories) into Project #9
+1. **Story 1.4 Done** — 2.3 (Frontend Auth) is now unblocked for gourav.g@3pillarglobal.com
+2. **Wave 2 ready set for abhigyan.ranjan@3pillarglobal.com**: 2.1 (Auth middleware), 4.1 (Leads repository), 6.1 (Mailer + digest repository)
+3. **Optional** — run `aire-review-code` for Stories 1.2 + 1.4 before pressing on to wave 2
+4. **Recommended fix** — repair root `.eslintrc.cjs` (duplicate keys, malformed) as a maintenance pass so lint can run again
 
 ---
 
@@ -200,5 +205,6 @@ See `docs/status/events.log` (created on first parallel run).
 | BUILD_CYCLE_PLANNER | — | Standby | — |
 | DEV | Implemented stories 1.1 + 1.3 in Mode 2 parallel | Idle | 2026-05-19 |
 | DEV | Story 1.2 complete | Idle | 2026-05-19 |
+| DEV | Story 1.4 complete (walking skeleton wired; Epic 1 done) | Active | 2026-05-19 |
 | REVIEWER | — | Standby | — |
 | QA | — | Standby | — |

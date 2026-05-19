@@ -1,23 +1,20 @@
 import { createBrowserRouter } from 'react-router-dom';
+
+import { HomePage } from './features/_home/HomePage';
 import { AppShell } from './ui/AppShell';
 
 /**
- * Router — application routes
+ * Router — application routes.
  *
- * Currently:
- * - "/" → home (placeholder, will be replaced by story 1.4)
+ * Routes are mounted by their owning feature stories. Each feature folder owns
+ * its page components; the router is the single auditable map (patterns §10).
  */
 export const router = createBrowserRouter([
   {
     path: '/',
     element: (
       <AppShell>
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Welcome</h2>
-          <p className="mt-2 text-gray-600">
-            Application is loading...
-          </p>
-        </div>
+        <HomePage />
       </AppShell>
     ),
   },

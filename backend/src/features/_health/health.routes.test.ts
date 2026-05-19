@@ -1,21 +1,32 @@
 import cors from 'cors';
 import express from 'express';
 import request from 'supertest';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 
 import { buildApp } from '@/app';
+import { db } from '@/db/client';
 import { AppError, ValidationError } from '@/http/errors';
 import { errorHandler } from '@/http/middleware/errorHandler';
 import { requestId } from '@/http/middleware/requestId';
 
 describe('GET /api/health', () => {
   const app = buildApp();
+  afterEach(() => vi.restoreAllMocks());
 
-  it('returns { ok: true }', async () => {
+  it('returns 200 + { ok: true, backend: ok, db: ok } when DB is reachable', async () => {
     const res = await request(app).get('/api/health');
     expect(res.status).toBe(200);
     expect(res.headers['content-type']).toMatch(/application\/json/);
-    expect(res.body).toEqual({ ok: true });
+    expect(res.body).toEqual({ ok: true, backend: 'ok', db: 'ok' });
+  });
+
+  it('returns 503 + db=down when the SQLite SELECT 1 fails', async () => {
+    vi.spyOn(db, 'prepare').mockImplementationOnce(() => {
+      throw new Error('db unreachable');
+    });
+    const res = await request(app).get('/api/health');
+    expect(res.status).toBe(503);
+    expect(res.body).toEqual({ ok: false, backend: 'ok', db: 'down' });
   });
 
   it('returns 404 with NOT_FOUND envelope on unknown route', async () => {
