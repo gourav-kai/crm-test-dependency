@@ -6,6 +6,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { buildApp } from '@/app';
 import { db } from '@/db/client';
 import { AppError, ValidationError } from '@/http/errors';
+import { signToken } from '@/http/middleware/auth';
 import { errorHandler } from '@/http/middleware/errorHandler';
 import { requestId } from '@/http/middleware/requestId';
 
@@ -30,7 +31,8 @@ describe('GET /api/health', () => {
   });
 
   it('returns 404 with NOT_FOUND envelope on unknown route', async () => {
-    const res = await request(app).get('/api/does-not-exist');
+    const token = signToken({ id: 1, role: 'admin' });
+    const res = await request(app).get('/api/does-not-exist').set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(404);
     expect(res.body.error.code).toBe('NOT_FOUND');
     expect(res.body.error.message).toBe('Route not found');

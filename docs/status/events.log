@@ -10,3 +10,10 @@
 [2026-05-19 18:00] DEV 1.4 — start
 [2026-05-19 17:50] DEV 1.4 — done tests=62/62 coverage=99.66%(FE)/95.89%(BE) lint=deferred reason=pre-existing root .eslintrc.cjs malformed (not modified by 1.4)
 [2026-05-20 14:05] DEV 2.3 - done tests=49/49 coverage=97.72%(FE lines) lint=clean build=pass
+[2026-05-20 12:35] DEV subagent 2.1 — Done; auth.ts + requireRole.ts + rateLimit.ts; tests 10/10; lint deferred to parent
+[2026-05-20 12:39] DEV subagent 4.1 — Done; leads.repository.ts + leads.types.ts; tests 7/7
+[2026-05-20 12:39] DEV subagent 6.1 — Done; mailer.ts + digest.repository.ts + digest.types.ts; tests 3/3
+[2026-05-20 12:43] DEV subagent 2.1 — Done; auth.ts + requireRole.ts + rateLimit.ts; tests 10/10; lint clean
+[2026-05-20 12:43] DEV subagent 4.1 — Done; leads.repository.ts + leads.types.ts; tests 7/7; lint clean
+[2026-05-20 12:43] DEV subagent 6.1 — Done; mailer.ts + digest.repository.ts + digest.types.ts; tests 3/3; lint clean
+[2026-05-20 12:43] DEV parent rollup — wave 2 complete; shared files serialized (package.json, express.d.ts, app.ts, factories.ts); health route test updated; 45/45 tests, coverage 91.46%
