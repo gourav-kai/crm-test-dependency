@@ -1,9 +1,7 @@
 # Project Status
 
-**Last Updated**: 2026-05-19 17:10
-**Updated By**: DEV (parent rollup, Mode 2 parallel wave)
-**Last Updated**: 2026-05-19 16:45
-**Updated By**: DEV
+**Last Updated**: 2026-05-20
+**Updated By**: DEV (parent rollup, Mode 2 parallel wave — stories 2.1, 4.1, 6.1)
 **Overall Status**: 🟡 IN PROGRESS
 
 ---
@@ -15,7 +13,7 @@
 **Start Date**: 2026-05-19
 **Target Completion**: TBD
 **Active Cycle**: N/A
-**Current Step**: Story 1.2 complete; waiting on Story 1.4 to unlock 2.3
+**Current Step**: Wave 2 complete — stories 2.1, 4.1, 6.1 done; wave 3 (2.2, 4.2, 5.1) now unblocked
 
 ---
 
@@ -36,7 +34,7 @@
 
 ## Progress Summary
 
-**Overall Completion**: 18% (4/22 stories complete)
+**Overall Completion**: 32% (7/22 stories complete)
 
 | Step | Status | Owner | Updated | Evidence |
 |------|--------|-------|---------|----------|
@@ -47,11 +45,11 @@
 | Build Cycles | ⏸️ Skipped | AIRE_BUILD_CYCLE_PLANNER | 2026-05-19 | (no cycles — single MVP) |
 | Implementation Plan | ✅ Done | AIRE_PRODUCT_OWNER | 2026-05-19 | `docs/plans/implementation-plan.md` + `docs/plans/dependency-graph.yml` + 22 story files |
 | Epic 1: Project Foundation | ✅ Done | DEV | 2026-05-19 | 4/4 stories done |
-| Epic 2: Authentication | ⏸️ Not Started | — | — | — |
+| Epic 2: Authentication | 🟡 In Progress | DEV | 2026-05-20 | 1/4 stories done (2.1) |
 | Epic 3: User Management | ⏸️ Not Started | — | — | — |
-| Epic 4: Lead Management | ⏸️ Not Started | — | — | — |
+| Epic 4: Lead Management | 🟡 In Progress | DEV | 2026-05-20 | 1/6 stories done (4.1) |
 | Epic 5: Analytics Dashboard | ⏸️ Not Started | — | — | — |
-| Epic 6: Weekly Email Digest | ⏸️ Not Started | — | — | — |
+| Epic 6: Weekly Email Digest | 🟡 In Progress | DEV | 2026-05-20 | 1/3 stories done (6.1) |
 | Review | ⏸️ Not Started | AIRE_REVIEWER | — | — |
 | QA | ⏸️ Not Started | AIRE_QA | — | — |
 
@@ -61,6 +59,7 @@
 
 > **Rollup**: Wave 1 partial complete — stories 1.1 (Backend skeleton) + 1.3 (DB foundation) implemented in parallel by assignee abhigyan.ranjan@3pillarglobal.com. 21/21 tests passing, coverage 95.67%, lint clean. Story 1.2 (Frontend skeleton) still pending — assigned to gourav.g@3pillarglobal.com. Next ready (assuming 1.2 lands): wave 2 = {1.4 (waits on 1.2), 2.1, 2.2, 4.1, 6.1}.
 > **Rollup**: Story 1.2 complete. Waiting on 1.4 to unlock 2.3 for gourav.g@3pillarglobal.com.
+> **Rollup**: Wave 2 complete (2026-05-20). Stories 2.1 (auth middleware), 4.1 (leads repository), 6.1 (mailer + digest repo) implemented in parallel by abhigyan.ranjan@3pillarglobal.com. 45/45 tests passing (combined), coverage 91.46%, lint clean.
 
 **Append-only log.** Each line: `[YYYY-MM-DD HH:MM] [AGENT] [STORY|step] — status`.
 
@@ -99,14 +98,14 @@
 | — | 1.2 | Frontend skeleton | 2026-05-19 16:01 | 2026-05-19 16:04 |
 | — | 1.3 | DB foundation (client, migrations, initial schema, seed) | — | — |
 | — | 1.4 | Connect FE to BE (health check on home page) | 2026-05-19 | 2026-05-19 |
-| — | 2.1 | Auth middleware + JWT verify + requireRole + rate limiter | — | — |
+| — | 2.1 | Auth middleware + JWT verify + requireRole + rate limiter | 2026-05-20 | 2026-05-20 |
 | — | 2.2 | Auth service + /auth/login + /auth/me | — | — |
 | — | 2.3 | Frontend AuthProvider + LoginPage + RequireAuth/RequireRole | — | — |
 | — | 2.4 | Auth integration tests (Supertest + MSW) | — | — |
 | — | 3.1 | Users repository + service (list, create, patch) | — | — |
 | — | 3.2 | Users routes (GET/POST/PATCH /users, admin-only) | — | — |
 | — | 3.3 | Frontend UsersAdminPage (list, create, deactivate) | — | — |
-| — | 4.1 | Leads repository (prepared statements, role-scoped queries) | — | — |
+| — | 4.1 | Leads repository (prepared statements, role-scoped queries) | 2026-05-20 | 2026-05-20 |
 | — | 4.2 | Leads service (role scope enforcement, stage transitions) | — | — |
 | — | 4.3 | Leads routes (CRUD + stage transition) | — | — |
 | — | 4.4 | Frontend LeadsListPage (filter, search, role-aware columns) | — | — |
@@ -114,7 +113,7 @@
 | — | 4.6 | Frontend stage transition UI (LeadDetailPage + StageStepper) | — | — |
 | — | 5.1 | Analytics service + routes (leads-per-person, leads-by-stage) | — | — |
 | — | 5.2 | Frontend DashboardPage (2 Recharts bar charts) | — | — |
-| — | 6.1 | Mailer + digest repository | — | — |
+| — | 6.1 | Mailer + digest repository | 2026-05-20 | 2026-05-20 |
 | — | 6.2 | Digest service (runWeeklyDigest, per-recipient try/catch) | — | — |
 | — | 6.3 | Scheduler + admin endpoints + digest CLI | — | — |
 
@@ -131,6 +130,7 @@
 [2026-05-19 17:08] 1.1+1.3 tests=21/21 coverage_stmts=95.67% coverage_branch=90% coverage_funcs=92.85% coverage_lines=95.67% lint=0
 [2026-05-19 16:04] [1.2] coverage=99.57% lint=clean tests=32/32
 [2026-05-19 17:50] [1.4] tests=62/62(BE=25,FE=37) coverage=95.89%(BE)/99.66%(FE) health-files=100% lint=deferred(pre-existing-root-eslintrc-malformed)
+[2026-05-20 12:43] [2.1+4.1+6.1] tests=45/45 coverage_stmts=91.46% coverage_branch=88.76% coverage_funcs=89.18% coverage_lines=91.46% lint=0
 ```
 
 ---
@@ -170,6 +170,15 @@ See `docs/status/events.log` (created on first parallel run).
   - Evidence: `docs/stories-implemented/story-1.4-review.md` (pending); backend 25/25 tests + frontend 37/37 tests = 62/62; coverage BE 95.89% lines, FE 99.66% lines, health files 100% across both
   - Files: `backend/src/features/_health/health.service.ts` (new) + `health.service.test.ts` (new); `backend/src/features/_health/health.routes.ts` (modified — checkHealth + 200/503); `health.routes.test.ts` (modified — new body shape + db-down case); `frontend/src/features/_home/{HomePage.tsx, HomePage.test.tsx, api.ts}` (new); `frontend/src/router.tsx` (modified — mounted HomePage at `/`); `frontend/package.json` (added `msw: ^2.4.0`)
   - Notes: walking-skeleton loop closed — `/api/health` now pings DB via `SELECT 1` and returns structured `{ok, backend, db}` (200 ok / 503 db-down). HomePage shows two StatusPills + Retry. Lint deferred (pre-existing root `.eslintrc.cjs` malformed from earlier commit `097b035`; not in 1.4's files_touched).
+- [x] **Story 2.1 — Auth Middleware**: Done — 2026-05-20
+  - Evidence: `docs/stories-implemented/story-2.1-review.md`; 10/10 tests passing, auth.ts 100% coverage, requireRole.ts 100% coverage, lint clean
+  - Notes: authMiddleware (JWT HS256), signToken helper, requireRole factory, loginRateLimit (5/15min). app.ts updated: /api/health mounted public before authMiddleware; all other /api routes require valid JWT.
+- [x] **Story 4.1 — Leads Repository**: Done — 2026-05-20
+  - Evidence: `docs/stories-implemented/story-4.1-review.md`; 7/7 tests passing, leads.repository.ts 98.66% coverage, lint clean
+  - Notes: Full CRUD + role-scoped listForUser + countByOwner/countByStage aggregations. Prepared statements only; rowToLead camelCase mapper.
+- [x] **Story 6.1 — Mailer + Digest Repository**: Done — 2026-05-20
+  - Evidence: `docs/stories-implemented/story-6.1-review.md`; 3/3 tests passing, digest.repository.ts 100% coverage, lint clean
+  - Notes: createNodemailerMailer (production) + createFakeMailer (test double with failOn). digestRepository.create + listRecent over digest_runs table.
 
 ---
 
@@ -179,9 +188,9 @@ See `docs/status/events.log` (created on first parallel run).
 2. **Run aire-qa-test-plan** to validate stories 1.1 + 1.3 against requirements
 3. **Story 1.2 (Frontend skeleton)** — assigned to gourav.g@3pillarglobal.com; not yet started
 4. **Wave 2 (after 1.2 lands)**: 1.4 (waits on 1.1+1.2+1.3), 2.1, 2.2, 4.1, 6.1 — many become ready as 1.x stories complete
-1. **Story 1.4 Done** — 2.3 (Frontend Auth) is now unblocked for gourav.g@3pillarglobal.com
-2. **Wave 2 ready set for abhigyan.ranjan@3pillarglobal.com**: 2.1 (Auth middleware), 4.1 (Leads repository), 6.1 (Mailer + digest repository)
-3. **Optional** — run `aire-review-code` for Stories 1.2 + 1.4 before pressing on to wave 2
+1. **Wave 3 ready set for abhigyan.ranjan@3pillarglobal.com**: 2.2 (Auth service + routes, requires 1.3✅ + 2.1✅)
+2. **gourav.g@3pillarglobal.com**: 2.3 (Frontend Auth, requires 1.2✅ + 1.4✅), 4.2 (Leads service, requires 2.1✅ + 4.1✅), 5.1 (Analytics, requires 4.1✅) — all unblocked
+3. **Optional** — run `aire-review-code` for Stories 2.1, 4.1, 6.1 before wave 3
 4. **Recommended fix** — repair root `.eslintrc.cjs` (duplicate keys, malformed) as a maintenance pass so lint can run again
 
 ---
@@ -205,6 +214,6 @@ See `docs/status/events.log` (created on first parallel run).
 | BUILD_CYCLE_PLANNER | — | Standby | — |
 | DEV | Implemented stories 1.1 + 1.3 in Mode 2 parallel | Idle | 2026-05-19 |
 | DEV | Story 1.2 complete | Idle | 2026-05-19 |
-| DEV | Story 1.4 complete (walking skeleton wired; Epic 1 done) | Active | 2026-05-19 |
+| DEV | Wave 2 complete — stories 2.1, 4.1, 6.1 done in parallel; 45/45 tests | Active | 2026-05-20 |
 | REVIEWER | — | Standby | — |
 | QA | — | Standby | — |
