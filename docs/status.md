@@ -2,6 +2,8 @@
 
 **Last Updated**: 2026-05-20
 **Updated By**: DEV (parent rollup, Mode 2 parallel wave — stories 2.1, 4.1, 6.1)
+**Last Updated**: 2026-05-20 14:05
+**Updated By**: DEV (Story 2.3 frontend auth)
 **Overall Status**: 🟡 IN PROGRESS
 
 ---
@@ -14,6 +16,7 @@
 **Target Completion**: TBD
 **Active Cycle**: N/A
 **Current Step**: Wave 2 complete — stories 2.1, 4.1, 6.1 done; wave 3 (2.2, 4.2, 5.1) now unblocked
+**Current Step**: Story 2.3 complete; gourav.g queue waits on backend prerequisites
 
 ---
 
@@ -35,6 +38,7 @@
 ## Progress Summary
 
 **Overall Completion**: 32% (7/22 stories complete)
+**Overall Completion**: 23% (5/22 stories complete)
 
 | Step | Status | Owner | Updated | Evidence |
 |------|--------|-------|---------|----------|
@@ -46,6 +50,7 @@
 | Implementation Plan | ✅ Done | AIRE_PRODUCT_OWNER | 2026-05-19 | `docs/plans/implementation-plan.md` + `docs/plans/dependency-graph.yml` + 22 story files |
 | Epic 1: Project Foundation | ✅ Done | DEV | 2026-05-19 | 4/4 stories done |
 | Epic 2: Authentication | 🟡 In Progress | DEV | 2026-05-20 | 1/4 stories done (2.1) |
+| Epic 2: Authentication | In Progress | DEV | 2026-05-20 | 1/4 stories done |
 | Epic 3: User Management | ⏸️ Not Started | — | — | — |
 | Epic 4: Lead Management | 🟡 In Progress | DEV | 2026-05-20 | 1/6 stories done (4.1) |
 | Epic 5: Analytics Dashboard | ⏸️ Not Started | — | — | — |
@@ -60,6 +65,7 @@
 > **Rollup**: Wave 1 partial complete — stories 1.1 (Backend skeleton) + 1.3 (DB foundation) implemented in parallel by assignee abhigyan.ranjan@3pillarglobal.com. 21/21 tests passing, coverage 95.67%, lint clean. Story 1.2 (Frontend skeleton) still pending — assigned to gourav.g@3pillarglobal.com. Next ready (assuming 1.2 lands): wave 2 = {1.4 (waits on 1.2), 2.1, 2.2, 4.1, 6.1}.
 > **Rollup**: Story 1.2 complete. Waiting on 1.4 to unlock 2.3 for gourav.g@3pillarglobal.com.
 > **Rollup**: Wave 2 complete (2026-05-20). Stories 2.1 (auth middleware), 4.1 (leads repository), 6.1 (mailer + digest repo) implemented in parallel by abhigyan.ranjan@3pillarglobal.com. 45/45 tests passing (combined), coverage 91.46%, lint clean.
+> **Rollup**: Story 2.3 complete. Frontend auth loop implemented (AuthProvider, LoginPage, RequireAuth, RequireRole, AppShell auth slot, API 401 event). Frontend build passed; tests 49/49; coverage 97.72% lines; lint clean after repairing the pre-existing root ESLint config.
 
 **Append-only log.** Each line: `[YYYY-MM-DD HH:MM] [AGENT] [STORY|step] — status`.
 
@@ -75,6 +81,7 @@
 [2026-05-19 17:08] DEV 1.3 — Done; DB foundation (better-sqlite3 client + idempotent migration runner + 0001_init schema + seed script); 8 tests; lint clean
 [2026-05-19 17:09] DEV parent rollup — wave 1 complete; serialized edits applied (eslint v8 pin + plugins, vitest setup file, backend deps bcrypt/better-sqlite3, server.ts runMigrations wire-in); 21/21 tests, coverage 95.67%
 [2026-05-19 16:45] DEV Story 1.2 — done (tests 32/32, coverage 99.57%)
+[2026-05-20 14:05] DEV Story 2.3 - done (build pass, tests 49/49, coverage_lines=97.72%, lint=0)
 ```
 
 ---
@@ -100,7 +107,7 @@
 | — | 1.4 | Connect FE to BE (health check on home page) | 2026-05-19 | 2026-05-19 |
 | — | 2.1 | Auth middleware + JWT verify + requireRole + rate limiter | 2026-05-20 | 2026-05-20 |
 | — | 2.2 | Auth service + /auth/login + /auth/me | — | — |
-| — | 2.3 | Frontend AuthProvider + LoginPage + RequireAuth/RequireRole | — | — |
+| - | 2.3 | Frontend AuthProvider + LoginPage + RequireAuth/RequireRole | 2026-05-20 13:00 | 2026-05-20 14:05 |
 | — | 2.4 | Auth integration tests (Supertest + MSW) | — | — |
 | — | 3.1 | Users repository + service (list, create, patch) | — | — |
 | — | 3.2 | Users routes (GET/POST/PATCH /users, admin-only) | — | — |
@@ -123,6 +130,7 @@
 
 > **Rollup** (wave 1, stories 1.1 + 1.3 combined backend coverage run): Statements 95.67% ✅ | Branches 90% ✅ | Functions 92.85% ✅ | Lines 95.67% ✅ | Tests 21/21 ✅ | Lint 0 errors ✅.
 > **Rollup**: Coverage avg 99.57%, lint clean, 32/32 tests passing across 1 story.
+> **Rollup**: Story 2.3 frontend build passed; tests 49/49; coverage 97.72% lines / 94.71% branches / 97.61% functions / 97.72% statements; lint clean.
 
 **Append-only log.** Each line: `[YYYY-MM-DD HH:MM] [STORY] metric=value …`.
 
@@ -131,6 +139,7 @@
 [2026-05-19 16:04] [1.2] coverage=99.57% lint=clean tests=32/32
 [2026-05-19 17:50] [1.4] tests=62/62(BE=25,FE=37) coverage=95.89%(BE)/99.66%(FE) health-files=100% lint=deferred(pre-existing-root-eslintrc-malformed)
 [2026-05-20 12:43] [2.1+4.1+6.1] tests=45/45 coverage_stmts=91.46% coverage_branch=88.76% coverage_funcs=89.18% coverage_lines=91.46% lint=0
+[2026-05-20 14:05] [2.3] build=pass tests=49/49 coverage_stmts=97.72% coverage_branch=94.71% coverage_funcs=97.61% coverage_lines=97.72% lint=0
 ```
 
 ---
@@ -179,6 +188,9 @@ See `docs/status/events.log` (created on first parallel run).
 - [x] **Story 6.1 — Mailer + Digest Repository**: Done — 2026-05-20
   - Evidence: `docs/stories-implemented/story-6.1-review.md`; 3/3 tests passing, digest.repository.ts 100% coverage, lint clean
   - Notes: createNodemailerMailer (production) + createFakeMailer (test double with failOn). digestRepository.create + listRecent over digest_runs table.
+- [x] **Story 2.3 - Frontend AuthProvider + LoginPage + RequireAuth/RequireRole**: Done - 2026-05-20
+  - Evidence: `docs/stories-implemented/story-2.3-frontend-auth-review.md`; frontend build passed, 49/49 tests passing, coverage 97.72% lines, lint clean
+  - Notes: AuthProvider persists `mvp-crm-token`, hydrates via `/api/auth/me`, LoginPage handles 401/429, protected routes redirect with `next`, admin-only role guard renders 403.
 
 ---
 
@@ -192,6 +204,10 @@ See `docs/status/events.log` (created on first parallel run).
 2. **gourav.g@3pillarglobal.com**: 2.3 (Frontend Auth, requires 1.2✅ + 1.4✅), 4.2 (Leads service, requires 2.1✅ + 4.1✅), 5.1 (Analytics, requires 4.1✅) — all unblocked
 3. **Optional** — run `aire-review-code` for Stories 2.1, 4.1, 6.1 before wave 3
 4. **Recommended fix** — repair root `.eslintrc.cjs` (duplicate keys, malformed) as a maintenance pass so lint can run again
+1. **Review/QA** - run `aire-review-code` and QA validation for completed foundation/auth frontend stories as needed.
+2. **Backend ready set** - `2.1` (Auth middleware), `4.1` (Leads repository), and `6.1` (Mailer + digest repository) remain ready for abhigyan.ranjan@3pillarglobal.com.
+3. **gourav.g queue** - next assigned stories are blocked on backend prerequisites (`4.2` waits on `2.1` + `4.1`; `5.1` waits on `4.1`; `2.4` waits on `2.2`).
+4. **Maintenance completed** - root `.eslintrc.cjs` repaired; frontend lint runs clean.
 
 ---
 
@@ -215,5 +231,7 @@ See `docs/status/events.log` (created on first parallel run).
 | DEV | Implemented stories 1.1 + 1.3 in Mode 2 parallel | Idle | 2026-05-19 |
 | DEV | Story 1.2 complete | Idle | 2026-05-19 |
 | DEV | Wave 2 complete — stories 2.1, 4.1, 6.1 done in parallel; 45/45 tests | Active | 2026-05-20 |
+| DEV | Story 1.4 complete (walking skeleton wired; Epic 1 done) | Idle | 2026-05-19 |
+| DEV | Story 2.3 complete (frontend auth) | Idle | 2026-05-20 |
 | REVIEWER | — | Standby | — |
 | QA | — | Standby | — |

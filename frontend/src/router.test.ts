@@ -9,12 +9,19 @@ describe('router', () => {
   });
 
   it('should have route for path /', () => {
-    const rootRoute = router.routes[0];
+    const rootRoute = router.routes.find((route) => route.path === '/');
+    expect(rootRoute).toBeDefined();
+    if (!rootRoute) throw new Error('Missing root route');
     expect(rootRoute.path).toBe('/');
   });
 
+  it('should have an unauthenticated login route', () => {
+    const loginRoute = router.routes.find((route) => route.path === '/login');
+    expect(loginRoute).toBeDefined();
+  });
+
   it('should have element for root route', () => {
-    const rootRoute = router.routes[0];
+    const rootRoute = router.routes.find((route) => route.path === '/');
     expect(rootRoute).toBeDefined();
   });
 });

@@ -1,4 +1,7 @@
 import { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
+
+import { useAuth } from '@/features/auth/useAuth';
 
 interface AppShellProps {
   children?: ReactNode;
@@ -12,6 +15,8 @@ interface AppShellProps {
  * - Main content area for children
  */
 export function AppShell({ children }: AppShellProps) {
+  const { user, status, logout } = useAuth();
+
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
       {/* Header */}
@@ -22,9 +27,25 @@ export function AppShell({ children }: AppShellProps) {
             <h1 className="text-xl font-bold text-gray-900">Mvp-CRM</h1>
           </div>
 
-          {/* Navigation placeholder (future menu items) */}
-          <div className="flex items-center space-x-4">
-            {/* User slot placeholder — will be populated by auth context */}
+          <div className="flex items-center gap-4 text-sm">
+            {status === 'authed' && user ? (
+              <>
+                <span className="font-medium text-gray-700">
+                  {user.fullName}
+                </span>
+                <button
+                  className="font-medium text-blue-700 hover:underline"
+                  onClick={logout}
+                  type="button"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link className="font-medium text-blue-700 hover:underline" to="/login">
+                Login
+              </Link>
+            )}
           </div>
         </nav>
       </header>

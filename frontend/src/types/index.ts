@@ -5,13 +5,11 @@
 
 // User types
 export interface User {
-  id: string;
+  id: number;
   email: string;
-  name: string;
-  role: 'admin' | 'salesperson';
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  fullName: string;
+  role: 'admin' | 'sales';
+  active: boolean;
 }
 
 // Lead types
