@@ -14,6 +14,35 @@ export class ApiError extends Error {
   }
 }
 
+type ApiInit = RequestInit & { auth?: boolean };
+
+const API_PREFIX = '/api';
+const TOKEN_KEY = 'mvp-crm-token';
+
+function toApiPath(path: string) {
+  return path.startsWith(API_PREFIX) ? path : `${API_PREFIX}${path}`;
+}
+
+function buildHeaders(init?: ApiInit) {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (init?.auth !== false) {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+  }
+
+  if (init?.headers) {
+    const initHeaders = init.headers as Record<string, string>;
+    Object.assign(headers, initHeaders);
+  }
+
+  return headers;
+}
+
 /**
  * Thin fetch wrapper with JWT support and error handling
  *
@@ -31,44 +60,33 @@ export class ApiError extends Error {
  */
 export async function api<T>(
   path: string,
-  init?: RequestInit
+  init?: ApiInit
 ): Promise<T> {
   try {
-    // Build headers with JWT if available
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-
-    const token = localStorage.getItem('jwt_token');
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
-    // Merge init headers if provided
-    if (init?.headers) {
-      const initHeaders = init.headers as Record<string, string>;
-      Object.assign(headers, initHeaders);
-    }
-
-    // Merge init with headers
+    const headers = buildHeaders(init);
+    const { auth: authEnabled, ...requestInit } = init ?? {};
+    void authEnabled;
     const options: RequestInit = {
       method: 'GET',
-      ...init,
+      ...requestInit,
       headers,
     };
 
-    // Make request
-    const response = await fetch(path, options);
+    const response = await fetch(toApiPath(path), options);
 
-    // Handle non-2xx responses
     if (!response.ok) {
-      interface ErrorResponse {
+      interface ErrorEnvelope {
+        error?: {
+          code?: string;
+          message?: string;
+          details?: Record<string, unknown>;
+        };
         code?: string;
         message?: string;
         details?: Record<string, unknown>;
       }
 
-      let errorData: ErrorResponse = {
+      let errorData: ErrorEnvelope = {
         code: 'UNKNOWN_ERROR',
         message: `HTTP ${response.status}`,
       };
@@ -79,23 +97,29 @@ export async function api<T>(
         // If response is not JSON, use default
       }
 
+      if (response.status === 401) {
+        window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+      }
+
+      const envelope = errorData.error ?? errorData;
       throw new ApiError(
         response.status,
-        errorData.message || `HTTP ${response.status}`,
-        errorData.code || 'UNKNOWN_ERROR',
-        errorData.details || {}
+        envelope.message || `HTTP ${response.status}`,
+        envelope.code || 'UNKNOWN_ERROR',
+        envelope.details || {}
       );
     }
 
-    // Parse and return successful response
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
     return await response.json();
   } catch (error) {
-    // If already an ApiError, rethrow
     if (error instanceof ApiError) {
       throw error;
     }
 
-    // Convert network errors to ApiError
     const message =
       error instanceof Error ? error.message : 'Network error';
     throw new ApiError(0, message, 'NETWORK_ERROR', {});

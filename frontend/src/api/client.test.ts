@@ -11,6 +11,7 @@ describe('api client', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
   describe('ApiError class', () => {
@@ -47,7 +48,7 @@ describe('api client', () => {
 
     it('should include Authorization header if JWT token exists in localStorage', async () => {
       const token = 'test-jwt-token';
-      localStorage.setItem('jwt_token', token);
+      localStorage.setItem('mvp-crm-token', token);
 
       const mockData = { id: 1 };
       fetchMock.mockResolvedValueOnce({
@@ -66,7 +67,7 @@ describe('api client', () => {
         },
       });
 
-      localStorage.removeItem('jwt_token');
+      localStorage.removeItem('mvp-crm-token');
     });
 
     it('should make a POST request with body data', async () => {
@@ -130,6 +131,49 @@ describe('api client', () => {
       });
 
       await expect(api('/api/test')).rejects.toThrow(ApiError);
+    });
+
+    it('should dispatch auth:unauthorized before throwing on 401', async () => {
+      const onUnauthorized = vi.fn();
+      window.addEventListener('auth:unauthorized', onUnauthorized);
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        json: async () => ({
+          error: {
+            code: 'UNAUTHORIZED',
+            message: 'Unauthorized',
+          },
+        }),
+      });
+
+      await expect(api('/auth/me')).rejects.toMatchObject({
+        status: 401,
+        code: 'UNAUTHORIZED',
+      });
+
+      expect(onUnauthorized).toHaveBeenCalledTimes(1);
+      expect(fetchMock).toHaveBeenCalledWith('/api/auth/me', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      window.removeEventListener('auth:unauthorized', onUnauthorized);
+    });
+
+    it('should omit Authorization header when auth is false', async () => {
+      localStorage.setItem('mvp-crm-token', 'test-jwt-token');
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ ok: true }),
+      });
+
+      await api('/auth/login', { auth: false });
+
+      expect(fetchMock).toHaveBeenCalledWith('/api/auth/login', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
     });
 
     it('should throw ApiError with default message on network error', async () => {

@@ -1,13 +1,37 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MemoryRouter } from 'react-router-dom';
+import type { ReactNode } from 'react';
+
+import { AuthProvider } from '@/features/auth/AuthProvider';
+
 import { AppShell } from './AppShell';
 
+function renderWithProviders(ui: ReactNode) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter>
+        <AuthProvider>{ui}</AuthProvider>
+      </MemoryRouter>
+    </QueryClientProvider>,
+  );
+}
+
 describe('AppShell', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
   it('should render the brand logo "Mvp-CRM" in the header', () => {
-    render(
+    renderWithProviders(
       <AppShell>
         <div>Test Content</div>
-      </AppShell>
+      </AppShell>,
     );
 
     const branding = screen.getByText(/mvp-crm/i);
@@ -16,20 +40,20 @@ describe('AppShell', () => {
 
   it('should render the children in the main content area', () => {
     const testContent = 'Test Child Content';
-    render(
+    renderWithProviders(
       <AppShell>
         <div>{testContent}</div>
-      </AppShell>
+      </AppShell>,
     );
 
     expect(screen.getByText(testContent)).toBeInTheDocument();
   });
 
   it('should have a header with nav structure', () => {
-    render(
+    renderWithProviders(
       <AppShell>
         <div>Content</div>
-      </AppShell>
+      </AppShell>,
     );
 
     const nav = screen.getByRole('navigation');
@@ -37,10 +61,10 @@ describe('AppShell', () => {
   });
 
   it('should render with proper layout structure', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <AppShell>
         <div data-testid="main-content">Content</div>
-      </AppShell>
+      </AppShell>,
     );
 
     // Should have a header element
@@ -54,5 +78,18 @@ describe('AppShell', () => {
     // Content should be inside main
     const mainContent = main?.querySelector('[data-testid="main-content"]');
     expect(mainContent).toBeInTheDocument();
+  });
+
+  it('should show a login link for anonymous users', () => {
+    renderWithProviders(
+      <AppShell>
+        <div>Content</div>
+      </AppShell>,
+    );
+
+    expect(screen.getByRole('link', { name: /login/i })).toHaveAttribute(
+      'href',
+      '/login',
+    );
   });
 });

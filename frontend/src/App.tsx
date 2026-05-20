@@ -1,5 +1,7 @@
 import { RouterProvider } from 'react-router-dom';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+
+import { AuthProvider } from './features/auth/AuthProvider';
 import { router } from './router';
 
 // Create a client for TanStack Query
@@ -22,7 +24,9 @@ const queryClient = new QueryClient({
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

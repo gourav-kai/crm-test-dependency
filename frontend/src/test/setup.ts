@@ -21,3 +21,13 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: () => {},
   }),
 });
+
+Object.defineProperty(window, 'AbortController', {
+  writable: true,
+  value: globalThis.AbortController,
+});
+
+Object.defineProperty(window, 'AbortSignal', {
+  writable: true,
+  value: globalThis.AbortSignal,
+});
