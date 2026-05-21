@@ -1,11 +1,31 @@
 {
-  "enabledMcpjsonServers": [
-    "atlassian-rovo"
-  ],
   "permissions": {
     "allow": [
       "Bash(gh --version)",
-      "Bash(gh auth *)"
+      "Bash(gh auth *)",
+      "Bash(gh project *)",
+      "Bash(gh label *)",
+      "Bash(gh api *)",
+      "Bash(aire --version)",
+      "Bash(aire graph-check *)",
+      "Bash(aire)",
+      "Bash(where aire *)",
+      "PowerShell(npm install *)",
+      "PowerShell(npm *)",
+      "Bash(sed -i *)",
+      "Bash(grep -c *)",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('package-lock.json','utf8'\\)\\); console.log\\('VALID JSON'\\)\")",
+      "Bash(git --version)",
+      "Bash(git init *)",
+      "Bash(git config *)",
+      "Bash(npm install *)",
+      "Bash(npx vitest *)",
+      "Bash(npm test *)",
+      "Bash(npx eslint *)",
+      "Bash(echo \"---BACKEND EXIT: $?\")"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "atlassian-rovo"
+  ]
 }

@@ -1,0 +1,268 @@
+# STATUS FORMAT — Canonical Template
+
+**ALL agents and workflows MUST follow this exact format when creating or updating `docs/status.md`.**
+
+Do NOT invent new sections, rename columns, add "Epic 0", use "Phase" instead of "Step", or change the status indicators. Read this template, then write `docs/status.md` exactly as specified.
+
+---
+
+## Rules for Updating status.md
+
+1. **Always read `docs/status.md` first** before writing — if it exists, update only the changed sections
+2. **If it does not exist**, create it using the full format below
+3. **Never rename rows** — use the exact Step names listed below
+4. **Never add rows like "Epic 0: Kickoff"** or "Epic 0: Documentation & Planning" — planning phases are tracked as individual Step rows, not as epics
+5. **Always recalculate Overall Completion** — count only implementation stories (Epic rows), not planning steps
+6. **Status indicators** — use ONLY these four values (no variations):
+   - `✅ Done` or `✅ Complete` — step is complete
+   - `🟡 In Progress` — step is actively being worked on
+   - `⏸️ Not Started` — step has not begun
+   - `🔴 Blocked` — step is blocked by a dependency or issue
+7. **Updated By** — always use the agent constant name (e.g., `ANALYST_PM_GREENFIELD`, `ARCHITECT`, `DEV`)
+8. **Overall Status** — use ONLY these three values:
+   - `🟢 ON TRACK` — no blockers, work proceeding
+   - `🟡 IN PROGRESS` — work started but early stages
+   - `🔴 BLOCKED` — a blocker is preventing progress
+9. **Evidence** — always include the file path to the output artifact
+10. **BUILDID** — if build cycles exist, include `**Active Cycle**: CYCLE-[N]` in Project Overview
+
+---
+
+## Full Format
+
+```markdown
+# Project Status
+
+**Last Updated**: [YYYY-MM-DD HH:MM]
+**Updated By**: [AGENT_NAME]
+**Overall Status**: 🟢 ON TRACK / 🟡 IN PROGRESS / 🔴 BLOCKED
+
+---
+
+## Project Overview
+
+**Project**: [Name]
+**Type**: Greenfield / Brownfield
+**Start Date**: [Date]
+**Target Completion**: [Date or TBD]
+**Active Cycle**: [CYCLE-N or N/A]
+**Current Step**: [Description of what is happening now]
+
+---
+
+## Progress Summary
+
+**Overall Completion**: [X]% ([Y]/[Z] stories complete)
+
+| Step | Status | Owner | Updated | Evidence |
+|------|--------|-------|---------|----------|
+| Requirements | ✅ Done | AIRE_ANALYST_PM | YYYY-MM-DD | `docs/requirements.md` |
+| System Discovery | ✅ Done | AIRE_ARCHITECT | YYYY-MM-DD | `docs/architecture/current/00-system-overview.md` |
+| Deep-Dive | ✅ Done | AIRE_ARCHITECT | YYYY-MM-DD | `docs/architecture/current/01-*-deep-dive.md` |
+| Target Architecture | ✅ Done | AIRE_ARCHITECT | YYYY-MM-DD | `docs/architecture/design/02-target-architecture-brownfield.md` _(brownfield only)_ |
+| Patterns | ✅ Done | AIRE_ARCHITECT | YYYY-MM-DD | `docs/architecture/design/03-patterns-and-standards-brownfield.md` _(brownfield variant)_ |
+| Architecture | ✅ Done | AIRE_ARCHITECT | YYYY-MM-DD | `docs/architecture/design/00-system-architecture-greenfield.md` _(greenfield only)_ |
+| Patterns | ✅ Done | AIRE_ARCHITECT | YYYY-MM-DD | `docs/architecture/design/01-patterns-and-standards-greenfield.md` _(greenfield variant)_ |
+| UI/UX Design | ✅ Done | AIRE_UI_UX_DESIGNER | YYYY-MM-DD | `docs/ui-ux/ui-ux-spec.md` |
+| Build Cycles | ✅ Done | AIRE_BUILD_CYCLE_PLANNER | YYYY-MM-DD | `docs/plans/builds/` |
+| Implementation Plan | ✅ Done | AIRE_PRODUCT_OWNER | YYYY-MM-DD | `docs/plans/implementation-plan.md` |
+| Epic 1: [Name] | 🟡 In Progress | AIRE_DEV | YYYY-MM-DD | [Y]/[Z] stories done |
+| Epic 2: [Name] | ⏸️ Not Started | — | — | — |
+| Review | ⏸️ Not Started | AIRE_REVIEWER | — | — |
+| QA | ⏸️ Not Started | AIRE_QA | — | — |
+| DevOps Discovery | ⏸️ Not Started | DEVOPS | — | — |
+| DevOps Pipeline | ⏸️ Not Started | DEVOPS | — | — |
+| DevOps Deploy | ⏸️ Not Started | DEVOPS | — | — |
+| DevOps Infra Evolve | ⏸️ Not Started | DEVOPS | — | — |
+
+**Row Rules:**
+- **Greenfield projects**: Include rows for Requirements, Architecture, Patterns, UI/UX Design (if applicable), Build Cycles (if used), Implementation Plan, then Epic rows, then Review, QA
+- **Brownfield projects**: Include rows for System Discovery, Deep-Dive, Requirements, Target Architecture, Patterns, Build Cycles (if used), UI/UX Design (if applicable), Implementation Plan, then Epic rows, then Review, QA
+- **DevOps workflows**: Include rows for DevOps Discovery, DevOps Pipeline, DevOps Deploy, DevOps Infra Evolve — only include rows for workflows actually run
+- **Only include rows for steps that apply** — eg: skip UI/UX Design if not used, skip System Discovery for greenfield, skip DevOps rows if DevOps workflows not used
+- **Epic rows**: One row per epic from the implementation plan. Format: `Epic N: [Name]`. Progress = `[done]/[total] stories done`
+- **Overall Completion**: Calculated as `(total stories done across all epics) / (total stories planned) * 100`. Only count Epic story completion — not planning steps.
+
+---
+
+## Current Step (Log)
+
+> **Rollup** (regenerated by parent on each update): [one-line summary of what is actively in flight, e.g. "Wave 2 in progress: 1.3 (DEV), 1.4 (DEV); 1.1/1.2 done."]
+
+**Append-only log.** Each line: `[YYYY-MM-DD HH:MM] [AGENT] [STORY|step] — status`. Never edit historical lines.
+
+```
+[2026-05-19 09:01] DEV   Story 1.1 — started (parallel mode, wave 1)
+[2026-05-19 09:01] DEV   Story 1.2 — started (parallel mode, wave 1)
+[2026-05-19 09:47] DEV   Story 1.1 — done (tests 14/14, coverage 92%)
+[2026-05-19 10:03] DEV   Story 1.2 — done (tests 9/9, coverage 88%)
+[2026-05-19 10:04] DEV   Wave 1 complete; checking wave 2 readiness
+```
+
+**Why append-only**: makes concurrent writes safe during parallel-mode execution. No two agents ever edit the same cell. The rollup at the top is regenerated by the parent on every status update.
+
+---
+
+## Build Cycles
+
+| Cycle | BUILDID | Scope | Stories | Status | Start | End |
+|-------|---------|-------|---------|--------|-------|-----|
+| Cycle 1 | CYCLE-1 | [scope] | 6/6 | ✅ Done | [Date] | [Date] |
+| Cycle 2 | CYCLE-2 | [scope] | 3/5 | 🟡 In Progress | [Date] | — |
+| Cycle 3 | CYCLE-3 | [scope] | 0/4 | ⏸️ Not Started | — | — |
+
+---
+
+## Story Tracker
+
+| BUILDID | Story | Title | Start | End |
+|---------|-------|-------|-------|-----|
+| CYCLE-1 | 1.1 | [Title] | 2026-04-01 | 2026-04-01 |
+| CYCLE-1 | 1.2 | [Title] | 2026-04-02 | 2026-04-03 |
+| CYCLE-1 | 1.3 | [Title] | — | — |
+| CYCLE-2 | 2.1 | [Title] | — | — |
+
+**Rules:**
+- **Plan workflows** (`aire-greenfield-plan`, `aire-brownfield-plan`) create this table with all stories, dates blank (`—`)
+- **DEV** sets **Start** date when beginning a story and **End** date when story is complete
+- Sort by BUILDID then Story number
+- **When multiple stories run in parallel**, only the parent agent writes to this table. Subagents emit a one-line completion event into `docs/status/events.log` (see Append-Only Event Log below); the parent reads the log and updates this Story Tracker.
+- **Table shape is regex-stable for the manager dashboard.** Do not change column order, header text, or markdown of the existing `| BUILDID | Story | Title | Start | End |` columns. Additional columns may only be appended at the END of the row.
+
+---
+
+## Quality Metrics (Log)
+
+> **Rollup** (regenerated by parent on each update):
+> Coverage avg [X]%, lint clean, [Y/Y] tests passing across [N] stories.
+
+**Append-only log.** Each line: `[YYYY-MM-DD HH:MM] [STORY] metric=value …`.
+
+```
+[2026-05-19 09:47] [1.1] coverage=92% lint=clean tests=14/14
+[2026-05-19 10:03] [1.2] coverage=88% lint=clean tests=9/9
+[2026-05-19 10:30] [1.3] coverage=86% lint=clean tests=11/11
+```
+
+The rollup block above is regenerated by the parent on every update; the log lines below it are permanent.
+
+---
+
+## Append-Only Event Log
+
+The companion file `docs/status/events.log` is the **coordination primitive** during parallel execution. Each parallel subagent writes a single line to `docs/status/events.log` on **start** and on **completion**:
+
+```
+[YYYY-MM-DD HH:MM] [AGENT] [STORY_ID] [EVENT_TYPE] [details]
+```
+
+`EVENT_TYPE` ∈ `started | done | failed | blocked`.
+
+Example:
+```
+[2026-05-19 09:01] DEV 1.1 started parallel-wave-1 assignee=alice@org.com
+[2026-05-19 09:01] DEV 1.2 started parallel-wave-1 assignee=bob@org.com
+[2026-05-19 09:47] DEV 1.1 done tests=14/14 coverage=92% files_changed=2
+[2026-05-19 10:03] DEV 1.2 done tests=9/9 coverage=88% files_changed=3
+```
+
+The parent reads `events.log` after each subagent return to:
+- Update the `## Story Tracker` row.
+- Append to `## Current Step (Log)` and `## Quality Metrics (Log)`.
+- Regenerate the rollups at the top of both log sections.
+- Re-evaluate the dependency graph for newly-ready stories.
+
+**Subagents never edit `docs/status.md` directly. They append only to `docs/status/events.log`.**
+
+---
+
+## Completed Steps
+
+- [x] **Requirements**: Done — YYYY-MM-DD
+  - Evidence: `docs/requirements.md`
+- [x] **Architecture**: Done — YYYY-MM-DD
+  - Evidence: `docs/architecture/design/00-system-architecture-greenfield.md`
+- [x] **Story 1.1**: [Title] — YYYY-MM-DD
+  - Evidence: `docs/plans/stories/epic-1-story-1.1-Title.md`
+  - Tests: All passing, coverage 87%
+
+---
+
+## Upcoming
+
+1. **Story [N.M]**: [Title] — next to implement
+2. **Story [N.M+1]**: [Title]
+3. **[Next workflow step]**
+
+---
+
+## Blockers
+
+| ID | Description | Owner | Opened | Status |
+|----|-------------|-------|--------|--------|
+| — | (none) | — | — | — |
+
+---
+
+## Agent Activity
+
+| Agent | Last Action | Status | Updated |
+|-------|------------|--------|---------|
+| ANALYST_PM | Requirements complete | Idle | YYYY-MM-DD |
+| ARCHITECT | Architecture complete | Idle | YYYY-MM-DD |
+| PRODUCT_OWNER | Plan complete | Idle | YYYY-MM-DD |
+| BUILD_CYCLE_PLANNER | — | Standby | — |
+| DEV | Story 1.1 in progress | Active | YYYY-MM-DD |
+| REVIEWER | — | Standby | — |
+| QA | — | Standby | — |
+```
+
+---
+
+## What Each Workflow Updates
+
+| Workflow | Rows to Update | Sections to Update |
+|----------|---------------|-------------------|
+| `aire-project-kickoff` | (creates file) | All sections — initial creation |
+| `aire-greenfield-requirements` | Requirements | Current Step Details, Completed Steps, Upcoming, Agent Activity |
+| `aire-brownfield-inspect` | System Discovery | Current Step Details, Completed Steps, Upcoming, Agent Activity |
+| `aire-brownfield-deep-dive` | Deep-Dive | Current Step Details, Completed Steps, Upcoming, Agent Activity |
+| `aire-brownfield-requirements` | Requirements | Current Step Details, Completed Steps, Upcoming, Agent Activity |
+| `aire-brownfield-architecture` | Target Architecture | Current Step Details, Completed Steps, Upcoming, Agent Activity |
+| `aire-brownfield-patterns` | Patterns | Current Step Details, Completed Steps, Upcoming, Agent Activity |
+| `aire-greenfield-architecture` | Architecture | Current Step Details, Completed Steps, Upcoming, Agent Activity |
+| `aire-greenfield-patterns` | Patterns | Current Step Details, Completed Steps, Upcoming, Agent Activity |
+| `aire-ui-ux-design` | UI/UX Design | Current Step Details, Completed Steps, Upcoming, Agent Activity |
+| `aire-build-cycles` | Build Cycles | Build Cycles table, Current Step Details, Completed Steps, Upcoming, Agent Activity |
+| `aire-greenfield-plan` | Implementation Plan | Current Step Details, Completed Steps, Upcoming, Story Tracker (create rows), Build Cycles (set Stories `0/N`), Agent Activity |
+| `aire-brownfield-plan` | Implementation Plan | Current Step Details, Completed Steps, Upcoming, Story Tracker (create rows), Build Cycles (set Stories `0/N`), Agent Activity |
+| `aire-dev-implement` (sequential) | Epic N row (progress) | Current Step (Log), Completed Steps, Upcoming, Story Tracker (Start/End dates), Build Cycles (Stories `X/N`, status, End date), Overall Completion, Quality Metrics (Log), Agent Activity |
+| `aire-dev-implement` (parallel) | Epic N row (progress) | Subagents append to `docs/status/events.log`; **parent** updates Story Tracker (Start/End), Build Cycles, Quality Metrics (Log) rollup, Current Step (Log) rollup, Overall Completion, Agent Activity |
+| `aire-dev-remediate` (sequential) | Epic N row (if rework changes progress), Blockers (clear resolved) | Current Step (Log), Completed Steps (per remediation log), Story Tracker (Remediation Started/End notes on affected rows), Quality Metrics (Log), Blockers, Agent Activity |
+| `aire-dev-remediate` (parallel) | same | Subagents append to `docs/status/events.log`; parent updates Story Tracker, Quality Metrics (Log) rollup, Current Step (Log) rollup, Blockers, Agent Activity |
+| `aire-review-code` (parallel) | Review | Subagents append to `docs/status/events.log`; parent updates Quality Metrics (Log) rollup, Current Step (Log) rollup, Agent Activity |
+| `aire-qa-validate` (parallel) | QA | Subagents append to `docs/status/events.log`; parent updates Current Step (Log) rollup, Completed Steps, Agent Activity |
+| `aire-qa-triage` (parallel) | QA / Blockers | Subagents append to `docs/status/events.log`; parent updates Blockers, Current Step (Log) rollup, Agent Activity |
+| `aire-review-code` | Review | Current Step Details, Completed Steps, Quality Metrics (Code Review), Agent Activity |
+| `aire-qa-validate` | QA | Current Step Details, Completed Steps, Agent Activity |
+| `aire-qa-triage` | QA / Blockers | Current Step Details (triage results), Blockers (add release-blocking bugs), Agent Activity |
+| `aire-devops-discover` | DevOps Discovery | Current Step Details, Completed Steps, Upcoming, Agent Activity |
+| `aire-devops-pipeline` | DevOps Pipeline | Current Step Details, Completed Steps, Upcoming, Agent Activity |
+| `aire-devops-deploy` | DevOps Deploy | Current Step Details, Completed Steps, Upcoming, Agent Activity |
+| `aire-devops-infra-evolve` | DevOps Infra Evolve | Current Step Details, Completed Steps, Upcoming, Agent Activity |
+
+---
+
+## Anti-Patterns (NEVER DO THESE)
+
+- **NEVER** add "Epic 0: Kickoff" or "Epic 0: Documentation & Planning" — planning steps have their own rows
+- **NEVER** use "Phase" as the column header — always use "Step"
+- **NEVER** use "Phase 1.1: Requirements" — just use "Requirements"
+- **NEVER** mix percentage and fraction in the same cell — use `[Y]/[Z] stories done` for Epic rows
+- **NEVER** leave Overall Completion at 0% when stories are done
+- **NEVER** use `.toon` references in status.md — always use `.md`
+- **NEVER** invent new status indicators — use only: `✅ Complete` or `✅ Done`, `🟡 In Progress`, `⏸️ Not Started`, `🔴 Blocked`
+- **NEVER** let subagents edit `docs/status.md` directly. Subagents write **only** to `docs/status/events.log`. The parent is the single writer of `docs/status.md`. This is what makes parallel execution merge-conflict-free.
+- **NEVER** change the `## Story Tracker` table columns or headers (`| BUILDID | Story | Title | Start | End |`). A manager dashboard scrapes this section with regex. New columns may only be **appended** at the end of the row.
+- **NEVER** edit `## Current Step (Log)` or `## Quality Metrics (Log)` lines in place — those sections are append-only. Only the rollup block at the top is regenerated.
+
