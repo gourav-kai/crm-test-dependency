@@ -1,6 +1,6 @@
 # Project Status
 
-**Last Updated**: 2026-05-20
+**Last Updated**: 2026-05-21 12:45 
 **Updated By**: DEV (parent rollup, Mode 2 parallel wave — stories 2.1, 4.1, 6.1)
 **Last Updated**: 2026-05-20 14:05
 **Updated By**: DEV (Story 2.3 frontend auth)
@@ -16,7 +16,7 @@
 **Target Completion**: TBD
 **Active Cycle**: N/A
 **Current Step**: Wave 2 complete — stories 2.1, 4.1, 6.1 done; wave 3 (2.2, 4.2, 5.1) now unblocked
-**Current Step**: Story 2.3 complete; gourav.g queue waits on backend prerequisites
+**Current Step**: Story 4.6 complete; gourav.g queue waits on backend prerequisites
 
 ---
 
@@ -39,6 +39,7 @@
 
 **Overall Completion**: 32% (7/22 stories complete)
 **Overall Completion**: 23% (5/22 stories complete)
+**Overall Completion**: 37,5% (8/22 stories complete)
 
 | Step | Status | Owner | Updated | Evidence |
 |------|--------|-------|---------|----------|
@@ -113,7 +114,7 @@
 | — | 3.2 | Users routes (GET/POST/PATCH /users, admin-only) | — | — |
 | — | 3.3 | Frontend UsersAdminPage (list, create, deactivate) | — | — |
 | — | 4.1 | Leads repository (prepared statements, role-scoped queries) | 2026-05-20 | 2026-05-20 |
-| — | 4.2 | Leads service (role scope enforcement, stage transitions) | — | — |
+| — | 4.2 | Leads service (role scope enforcement, stage transitions) | 2026-05-21 | — |
 | — | 4.3 | Leads routes (CRUD + stage transition) | — | — |
 | — | 4.4 | Frontend LeadsListPage (filter, search, role-aware columns) | — | — |
 | — | 4.5 | Frontend LeadFormPage (create + edit, RHF + Zod) | — | — |
@@ -140,6 +141,7 @@
 [2026-05-19 17:50] [1.4] tests=62/62(BE=25,FE=37) coverage=95.89%(BE)/99.66%(FE) health-files=100% lint=deferred(pre-existing-root-eslintrc-malformed)
 [2026-05-20 12:43] [2.1+4.1+6.1] tests=45/45 coverage_stmts=91.46% coverage_branch=88.76% coverage_funcs=89.18% coverage_lines=91.46% lint=0
 [2026-05-20 14:05] [2.3] build=pass tests=49/49 coverage_stmts=97.72% coverage_branch=94.71% coverage_funcs=97.61% coverage_lines=97.72% lint=0
+[2026-05-21 14:05] [2.3] build=pass tests=49/49 coverage_stmts=99.72% coverage_branch=94.71% coverage_funcs=97.61% coverage_lines=97.72% lint=0
 ```
 
 ---

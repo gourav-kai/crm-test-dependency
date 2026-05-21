@@ -57,11 +57,14 @@ export function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-start justify-center bg-gray-50 px-4 py-12">
-      <Card className="w-full max-w-md">
-        <h1 className="mb-6 text-2xl font-bold text-gray-900">
-          Sign in to Mvp-CRM
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-blue-100 px-4 py-12">
+      <Card className="w-full max-w-md shadow-lg">
+        <h1 className="mb-1 text-3xl font-bold tracking-tight text-gray-900">
+          Welcome back
         </h1>
+        <p className="mb-6 text-sm text-gray-500">
+          Sign in to your Mvp-CRM account
+        </p>
         <form className="space-y-4" onSubmit={onSubmit}>
           <label className="block">
             <span className="text-sm font-semibold text-gray-700">Email</span>
