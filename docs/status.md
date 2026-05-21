@@ -4,6 +4,8 @@
 **Updated By**: DEV (parent rollup, Mode 2 parallel wave — stories 2.1, 4.1, 6.1)
 **Last Updated**: 2026-05-20 14:05
 **Updated By**: DEV (Story 2.3 frontend auth)
+**Last Updated**: 2026-05-21 11:30
+**Updated By**: DEV (Story 4.2 Leads service)
 **Overall Status**: 🟡 IN PROGRESS
 
 ---
@@ -17,6 +19,7 @@
 **Active Cycle**: N/A
 **Current Step**: Wave 2 complete — stories 2.1, 4.1, 6.1 done; wave 3 (2.2, 4.2, 5.1) now unblocked
 **Current Step**: Story 2.3 complete; gourav.g queue waits on backend prerequisites
+**Current Step**: Story 4.2 complete — Leads service (role scope + stage transitions) landed; 4.3 (Leads routes) now unblocked
 
 ---
 
@@ -37,6 +40,7 @@
 
 ## Progress Summary
 
+**Overall Completion**: 36% (8/22 stories complete)
 **Overall Completion**: 32% (7/22 stories complete)
 **Overall Completion**: 23% (5/22 stories complete)
 
@@ -52,7 +56,7 @@
 | Epic 2: Authentication | 🟡 In Progress | DEV | 2026-05-20 | 1/4 stories done (2.1) |
 | Epic 2: Authentication | In Progress | DEV | 2026-05-20 | 1/4 stories done |
 | Epic 3: User Management | ⏸️ Not Started | — | — | — |
-| Epic 4: Lead Management | 🟡 In Progress | DEV | 2026-05-20 | 1/6 stories done (4.1) |
+| Epic 4: Lead Management | 🟡 In Progress | DEV | 2026-05-21 | 2/6 stories done (4.1, 4.2) |
 | Epic 5: Analytics Dashboard | ⏸️ Not Started | — | — | — |
 | Epic 6: Weekly Email Digest | 🟡 In Progress | DEV | 2026-05-20 | 1/3 stories done (6.1) |
 | Review | ⏸️ Not Started | AIRE_REVIEWER | — | — |
@@ -66,6 +70,7 @@
 > **Rollup**: Story 1.2 complete. Waiting on 1.4 to unlock 2.3 for gourav.g@3pillarglobal.com.
 > **Rollup**: Wave 2 complete (2026-05-20). Stories 2.1 (auth middleware), 4.1 (leads repository), 6.1 (mailer + digest repo) implemented in parallel by abhigyan.ranjan@3pillarglobal.com. 45/45 tests passing (combined), coverage 91.46%, lint clean.
 > **Rollup**: Story 2.3 complete. Frontend auth loop implemented (AuthProvider, LoginPage, RequireAuth, RequireRole, AppShell auth slot, API 401 event). Frontend build passed; tests 49/49; coverage 97.72% lines; lint clean after repairing the pre-existing root ESLint config.
+> **Rollup**: Story 4.2 complete (2026-05-21). Leads service implemented (role-scoped list/get/create/update/delete + stage transition state machine with allowed-transition guard). 14/14 tests passing, leads.service.ts 100% coverage, lint clean. 4.3 (Leads routes) now unblocked for abhigyan.ranjan@3pillarglobal.com.
 
 **Append-only log.** Each line: `[YYYY-MM-DD HH:MM] [AGENT] [STORY|step] — status`.
 
@@ -82,6 +87,7 @@
 [2026-05-19 17:09] DEV parent rollup — wave 1 complete; serialized edits applied (eslint v8 pin + plugins, vitest setup file, backend deps bcrypt/better-sqlite3, server.ts runMigrations wire-in); 21/21 tests, coverage 95.67%
 [2026-05-19 16:45] DEV Story 1.2 — done (tests 32/32, coverage 99.57%)
 [2026-05-20 14:05] DEV Story 2.3 - done (build pass, tests 49/49, coverage_lines=97.72%, lint=0)
+[2026-05-21 11:30] DEV Story 4.2 — done (tests 14/14, coverage_lines=100%, lint=0); role-scoped Leads service + stage transition state machine
 ```
 
 ---
@@ -113,7 +119,7 @@
 | — | 3.2 | Users routes (GET/POST/PATCH /users, admin-only) | — | — |
 | — | 3.3 | Frontend UsersAdminPage (list, create, deactivate) | — | — |
 | — | 4.1 | Leads repository (prepared statements, role-scoped queries) | 2026-05-20 | 2026-05-20 |
-| — | 4.2 | Leads service (role scope enforcement, stage transitions) | — | — |
+| — | 4.2 | Leads service (role scope enforcement, stage transitions) | 2026-05-21 | 2026-05-21 |
 | — | 4.3 | Leads routes (CRUD + stage transition) | — | — |
 | — | 4.4 | Frontend LeadsListPage (filter, search, role-aware columns) | — | — |
 | — | 4.5 | Frontend LeadFormPage (create + edit, RHF + Zod) | — | — |
@@ -131,6 +137,7 @@
 > **Rollup** (wave 1, stories 1.1 + 1.3 combined backend coverage run): Statements 95.67% ✅ | Branches 90% ✅ | Functions 92.85% ✅ | Lines 95.67% ✅ | Tests 21/21 ✅ | Lint 0 errors ✅.
 > **Rollup**: Coverage avg 99.57%, lint clean, 32/32 tests passing across 1 story.
 > **Rollup**: Story 2.3 frontend build passed; tests 49/49; coverage 97.72% lines / 94.71% branches / 97.61% functions / 97.72% statements; lint clean.
+> **Rollup**: Story 4.2 backend tests 14/14; leads.service.ts 100% lines / 100% branches / 100% functions / 100% statements; lint clean.
 
 **Append-only log.** Each line: `[YYYY-MM-DD HH:MM] [STORY] metric=value …`.
 
@@ -140,6 +147,7 @@
 [2026-05-19 17:50] [1.4] tests=62/62(BE=25,FE=37) coverage=95.89%(BE)/99.66%(FE) health-files=100% lint=deferred(pre-existing-root-eslintrc-malformed)
 [2026-05-20 12:43] [2.1+4.1+6.1] tests=45/45 coverage_stmts=91.46% coverage_branch=88.76% coverage_funcs=89.18% coverage_lines=91.46% lint=0
 [2026-05-20 14:05] [2.3] build=pass tests=49/49 coverage_stmts=97.72% coverage_branch=94.71% coverage_funcs=97.61% coverage_lines=97.72% lint=0
+[2026-05-21 11:30] [4.2] tests=14/14 coverage_stmts=100% coverage_branch=100% coverage_funcs=100% coverage_lines=100% lint=0
 ```
 
 ---
@@ -191,6 +199,9 @@ See `docs/status/events.log` (created on first parallel run).
 - [x] **Story 2.3 - Frontend AuthProvider + LoginPage + RequireAuth/RequireRole**: Done - 2026-05-20
   - Evidence: `docs/stories-implemented/story-2.3-frontend-auth-review.md`; frontend build passed, 49/49 tests passing, coverage 97.72% lines, lint clean
   - Notes: AuthProvider persists `mvp-crm-token`, hydrates via `/api/auth/me`, LoginPage handles 401/429, protected routes redirect with `next`, admin-only role guard renders 403.
+- [x] **Story 4.2 — Leads Service (role scope enforcement, stage transitions)**: Done — 2026-05-21
+  - Evidence: `docs/stories-implemented/story-4.2-review.md`; 14/14 tests passing, leads.service.ts 100% coverage, lint clean
+  - Notes: createLeadsService wraps leads.repository with role-scoped list/get/create/update/delete; stage transition state machine enforces allowed transitions (new→contacted→qualified→won|lost) and throws `ForbiddenError` for cross-owner access by sales role. Unlocks 4.3 (Leads routes).
 
 ---
 
@@ -233,5 +244,6 @@ See `docs/status/events.log` (created on first parallel run).
 | DEV | Wave 2 complete — stories 2.1, 4.1, 6.1 done in parallel; 45/45 tests | Active | 2026-05-20 |
 | DEV | Story 1.4 complete (walking skeleton wired; Epic 1 done) | Idle | 2026-05-19 |
 | DEV | Story 2.3 complete (frontend auth) | Idle | 2026-05-20 |
+| DEV | Story 4.2 complete (Leads service + stage transitions) | Idle | 2026-05-21 |
 | REVIEWER | — | Standby | — |
 | QA | — | Standby | — |
